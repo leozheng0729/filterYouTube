@@ -25,10 +25,12 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "https://www.youtube.com/*"
     ],
     "permissions": [
-      "tabs"
+      "tabs",
+      "storage",
+      "activeTab"
     ]
   }
 }
