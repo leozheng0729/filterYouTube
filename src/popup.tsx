@@ -21,7 +21,7 @@ function IndexPopup() {
       // 通知当前标签页刷新
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(tabs[0].id, { type: 'SETTINGS_UPDATED', settings: newSettings });
+          chrome.tabs.sendMessage(tabs[0].id, { type: 'refreshFilter', settings: newSettings });
         }
       });
     });
