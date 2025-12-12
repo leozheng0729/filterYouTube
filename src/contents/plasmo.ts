@@ -45,7 +45,7 @@
         "filterMode", // 过滤模式
         "matchType", // 匹配模式
         "filterEnabled", // 过滤启用状态
-        // "channels",
+        "channels", // 频道列表
         // "durationFilters",
         // "scheduleSettings"
       ])
@@ -57,7 +57,7 @@
         filterSettings.keywords = data.keywords || []
         filterSettings.mode = data.filterMode || "include"
         filterSettings.matchType = data.matchType || "contains"
-        // filterSettings.channels = data.channels || []
+        filterSettings.channels = data.channels || []
       }
 
       filterEnabled = data.filterEnabled !== false
