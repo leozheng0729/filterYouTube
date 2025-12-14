@@ -10,7 +10,10 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "antd": "^5.25.1",
     "plasmo": "0.90.5",
+    "rc-tween-one": "^3.0.6",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

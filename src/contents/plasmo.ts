@@ -1,9 +1,11 @@
+import type { TagInfo } from "~types"
+
 ;(function () {
   "use strict"
 
   // 配置选择器
   const SELECTORS = {
-    videoContainers: "ytd-rich-item-renderer, ytd-video-renderer, ytd-compact-video-renderer, ytd-reel-item-renderer",
+    videoContainers: "ytd-rich-item-renderer, ytd-video-renderer, ytd-compact-video-renderer, ytd-reel-item-renderer, ytd-search-pyv-renderer, ytd-ad-slot-renderer",
     videoTitles: "#video-title, .ytd-video-meta-block #video-title, h3 a, #video-title-link",
     channelNames: '#channel-name, .ytd-channel-name a, #byline a, ytd-channel-name a, .ytd-video-meta-block #channel-name, #channel-info #channel-name, [class*="channel"] a',
     shortsShelf: 'ytd-rich-shelf-renderer:has(#title-text #title:contains("Shorts"))',
@@ -14,12 +16,13 @@
   // Enhanced state variables
   let filterSettings = {
     keywords: [],
-    matchType: "contains",
-    channelFilterType: "include",
-    mode: "include",
     channels: [],
+    mode: "include",
+    disabled: false,
+    matchType: "contains", // "contains", "exact", "whole-word" / 固定值
+    channelFilterType: "include", // "include" or "exclude" / 固定值
   }
-  let filterEnabled = true // 是否启动
+  let filterEnabled = !filterSettings.disabled // 是否启动
   let observer = null
   let filterTimeout = null
 
@@ -41,26 +44,29 @@
     try {
       const data = await chrome.storage.sync.get([
         "filterSettings",
-        "keywords", // 关键字列表
-        "filterMode", // 过滤模式
-        "matchType", // 匹配模式
-        "filterEnabled", // 过滤启用状态
-        "channels", // 频道列表
+        // "keywords", // 关键字列表
+        // "channels", // 频道列表
+        // "filterMode", // 过滤模式
+        // "matchType", // 匹配模式
+        // "filterEnabled", // 过滤启用状态
         // "durationFilters",
         // "scheduleSettings"
-      ])
+      ]);
+      const newSettings = data.filterSettings;
+      const extractedData = {
+        channels: newSettings.channels.map((item: TagInfo) => item.value),
+        keywords: newSettings.keywords.map((item: TagInfo) => item.value),
+        disabled: newSettings.disabled,
+        mode: newSettings.mode
+      };
+      
+      filterSettings = { ...filterSettings, ...extractedData };
+      filterEnabled = filterSettings.disabled === false;
 
-      // Load enhanced settings if available
-      if (data.filterSettings) {
-        filterSettings = { ...filterSettings, ...data.filterSettings }
-      } else {
-        filterSettings.keywords = data.keywords || []
-        filterSettings.mode = data.filterMode || "include"
-        filterSettings.matchType = data.matchType || "contains"
-        filterSettings.channels = data.channels || []
+      // 清除所有高亮文本
+      if (extractedData.keywords.length === 0 && extractedData.channels.length === 0 || filterSettings.disabled) {
+        removeHighlights();
       }
-
-      filterEnabled = data.filterEnabled !== false
     } catch (error) {}
   }
 
@@ -93,7 +99,6 @@
           for (let i = currentIndex; i < endIndex; i++) {
             const container = videoContainers[i] as HTMLElement
             const videoData = extractVideoData(container)
-
             if (shouldShowVideo(videoData)) {
               showVideo(container)
               highlightMatches(videoData)
@@ -114,7 +119,9 @@
         }
 
         processBatch()
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error applying filter:", error)
+      }
     })
   }
 
@@ -203,7 +210,7 @@
   // 判断关键字匹配
   function checkKeywordMatch(title: string, channel: string) {
     if (filterSettings.keywords.length === 0) return false
-
+  
     const searchText = `${title} ${channel}`.toLowerCase()
 
     return filterSettings.keywords.some((keyword) => {
@@ -280,6 +287,28 @@
     if (highlightedText !== text) {
       element.innerHTML = highlightedText
     }
+  }
+
+  // 去除所有高亮关键字
+  function removeHighlights() {
+    const highlightedElements = document.querySelectorAll('.tubefiltr-highlight')
+    
+    highlightedElements.forEach((highlightElement) => {
+      const parent = highlightElement.parentElement
+      if (parent) {
+        // 获取高亮文本内容
+        const highlightText = highlightElement.textContent || ''
+        
+        // 创建文本节点替换高亮元素
+        const textNode = document.createTextNode(highlightText)
+        parent.replaceChild(textNode, highlightElement)
+        
+        // 如果父元素只剩下文本节点，恢复原始文本内容
+        if (parent.childNodes.length === 1 && parent.childNodes[0].nodeType === Node.TEXT_NODE) {
+          parent.textContent = parent.textContent
+        }
+      }
+    })
   }
 
   // 隐藏视频
@@ -405,7 +434,7 @@
 
   // 监听来自popup的消息
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "refreshFilter") {
+    if (message.type === "refreshFilter") {
       if (message.settings) {
         filterSettings = { ...filterSettings, ...message.settings }
       }
@@ -423,28 +452,26 @@
   })
 
   // 监听存储变化
-  chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === "sync") {
-      if (changes.filterSettings) {
-        filterSettings = {
-          ...filterSettings,
-          ...changes.filterSettings.newValue
-        }
-      }
+  // chrome.storage.onChanged.addListener((changes, namespace) => {
+  //   if (namespace === "sync") {
+  //     if (changes.filterSettings) {
+  //       filterSettings = {
+  //         ...filterSettings,
+  //         ...changes.filterSettings.newValue
+  //       }
+  //       // 开关
+  //       filterEnabled = changes.filterSettings.newValue.disabled === false
+  //     }
 
-      if (changes.filterEnabled) {
-        filterEnabled = changes.filterEnabled.newValue !== false
-      }
+  //     // Legacy compatibility
+  //     if (changes.keywords) {
+  //       filterSettings.keywords = changes.keywords.newValue || []
+  //     }
 
-      // Legacy compatibility
-      if (changes.keywords) {
-        filterSettings.keywords = changes.keywords.newValue || []
-      }
-
-      // 过滤内容
-      applyFilter()
-    }
-  })
+  //     // 过滤内容
+  //     applyFilter()
+  //   }
+  // })
 
   // 初始化
   if (document.readyState === "loading") {
