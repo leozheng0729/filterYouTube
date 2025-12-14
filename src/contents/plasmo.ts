@@ -376,15 +376,15 @@ import type { TagInfo } from "~types"
       const style = document.createElement("style")
       style.id = "tubefiltr-styles"
       style.textContent = `
-                .tubefiltr-highlight {
-                    background: linear-gradient(120deg, #fff3cd 0%, #ffeaa7 100%);
-                    color: #856404;
-                    padding: 1px 3px;
-                    border-radius: 3px;
-                    font-weight: 600;
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-                }
-            `
+        .tubefiltr-highlight {
+          background: linear-gradient(120deg, #fff3cd 0%, #ffeaa7 100%);
+          color: #856404;
+          padding: 1px 3px;
+          border-radius: 3px;
+          font-weight: 600;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+      `
       document.head.appendChild(style)
     }
   }

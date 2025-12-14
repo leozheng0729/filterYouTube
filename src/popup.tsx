@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react"
 import { Button, Flex, Radio, Space, Alert } from 'antd';
 import Keywords from "~components/keywords";
 import Channels from "~components/channelwords";
+import TipsModule from "~components/tips-module";
+
 import { type FilterSettings, DEFAULT_SETTINGS } from "./types"
 
 import './popup.css';
@@ -21,6 +23,7 @@ function IndexPopup() {
   const [settings, setSettings] = useState<FilterSettings>(DEFAULT_SETTINGS);
   const [tipMessage, setTipMessage] = useState<TipMessage>({ message: '', type: '' });
   const timeRef = useRef<NodeJS.Timeout | null>(null);
+  const [showModule, setShowModule] = useState('');
 
   // 2. 保存设置并通知 Content Script
   const saveSettings = (newSettings: FilterSettings) => {
@@ -96,30 +99,39 @@ function IndexPopup() {
 
   return (
     <div className="popup-container">
-      <Flex justify="center" vertical>
-        <Radio.Group
-          block
-          options={options}
-          onChange={modeChange}
-          value={settings.mode}
-          optionType="button"
-          buttonStyle="solid"
-          className="popup-radio"
-          size="large"
-          style={{ width: '100%' }}
-        />
-        <Space direction="vertical" style={{ width: '100%', marginTop: '12px' }} size="large">
-          <Keywords toggleTips={toggleTips} keywords={settings.keywords} saveKeywords={saveKeywords} />
-          <Channels toggleTips={toggleTips} channels={settings.channels} saveKeywords={saveKeywords} />
-            <Space direction="horizontal" size="small" className="popup-actions">
-            <Flex align="space-between" gap="small" style={{ width: '100%' }}>
-              <Button style={{ width: '100%' }} color="danger" variant="outlined" size="large" onClick={clearAllSettings}>Clear All</Button>
-              <Button style={{ width: '100%' }} color="danger" variant="solid" size="large" onClick={toggleDisabled}>Toggle Disabled</Button>
-            </Flex>
-          </Space>
-          { tipMessage.message && tipMessage.type && <Alert message={tipMessage.message} type={tipMessage.type} /> }
-        </Space>
-      </Flex>
+      {
+        showModule !== 'payed' && (
+          <TipsModule />
+        )
+      }
+      {
+        showModule === 'payed' && (
+          <Flex justify="center" vertical>
+            <Radio.Group
+              block
+              options={options}
+              onChange={modeChange}
+              value={settings.mode}
+              optionType="button"
+              buttonStyle="solid"
+              className="popup-radio"
+              size="large"
+              style={{ width: '100%' }}
+            />
+            <Space direction="vertical" style={{ width: '100%', marginTop: '12px' }} size="large">
+              <Keywords toggleTips={toggleTips} keywords={settings.keywords} saveKeywords={saveKeywords} />
+              <Channels toggleTips={toggleTips} channels={settings.channels} saveKeywords={saveKeywords} />
+                <Space direction="horizontal" size="small" className="popup-actions">
+                <Flex align="space-between" gap="small" style={{ width: '100%' }}>
+                  <Button style={{ width: '100%' }} color="danger" variant="outlined" size="large" onClick={clearAllSettings}>Clear All</Button>
+                  <Button style={{ width: '100%' }} color="danger" variant="solid" size="large" onClick={toggleDisabled}>Toggle Disabled</Button>
+                </Flex>
+              </Space>
+              { tipMessage.message && tipMessage.type && <Alert message={tipMessage.message} type={tipMessage.type} /> }
+            </Space>
+          </Flex>
+        )
+      }
     </div>
   );
 }
