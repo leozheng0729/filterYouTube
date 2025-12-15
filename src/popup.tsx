@@ -3,12 +3,14 @@ import { Button, Flex, Radio, Space, Alert } from 'antd';
 import Keywords from "~components/keywords";
 import Channels from "~components/channelwords";
 import TipsModule from "~components/tips-module";
+import CustomFullScreenLoading from "~components/custom-loading";
 
 import { type FilterSettings, DEFAULT_SETTINGS } from "./types"
 
 import './popup.css';
 
 import type { CheckboxGroupProps } from 'antd/es/checkbox';
+import { getCurrentUser } from "~core/supabase";
 
 const options: CheckboxGroupProps<string>['options'] = [
   { label: 'Include', value: 'include' },
@@ -20,6 +22,8 @@ interface TipMessage {
 }
 
 function IndexPopup() {
+  const [user, setUser] = useState(null);
+  const [pageLoading, setPageLoading] = useState(true);
   const [settings, setSettings] = useState<FilterSettings>(DEFAULT_SETTINGS);
   const [tipMessage, setTipMessage] = useState<TipMessage>({ message: '', type: '' });
   const timeRef = useRef<NodeJS.Timeout | null>(null);
@@ -95,17 +99,30 @@ function IndexPopup() {
       }
       setSettings({ ...DEFAULT_SETTINGS, mode: 'include' });
     });
+
+    // 获取当前用户
+    const getUserInfo = async () => {
+      try {
+        const userInfo = await getCurrentUser();
+        userInfo && setUser(userInfo);
+      } catch (error) {
+        console.log(error);
+      }
+      setPageLoading(false);
+    }
+    getUserInfo();
   }, []);
 
   return (
     <div className="popup-container">
+      <CustomFullScreenLoading visible={pageLoading} />
       {
-        showModule !== 'payed' && (
-          <TipsModule />
+        showModule !== 'payed' && !pageLoading && (
+          <TipsModule user={user} />
         )
       }
       {
-        showModule === 'payed' && (
+        showModule === 'payed' && !pageLoading && (
           <Flex justify="center" vertical>
             <Radio.Group
               block

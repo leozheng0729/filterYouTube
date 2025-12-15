@@ -1,7 +1,8 @@
 import { Button, Flex } from "antd";
 
 
-const TipsModule = () => {
+const TipsModule = (user) => {
+  const email = user?.user?.email;
 
   // 登录操作
   const handleLoginClick = () => {
@@ -12,15 +13,20 @@ const TipsModule = () => {
 
   return (
     <Flex justify="center" style={{ minHeight: 271 }} vertical>
-      <Button type="primary" danger size="large" style={{ cursor: 'pointer', borderRadius: 2 }} onClick={handleLoginClick}>
-        Sign In
-      </Button>
-
-      {/* <Button type="primary" danger size="large" style={{ cursor: 'pointer', borderRadius: 2 }} onClick={handleGetStartedClick}>
-        Get Started ($6)
-      </Button>
-      <Button type="text" disabled>One-time payment. Lifetime access. No subscription</Button> */}
-
+      {
+        email ? (
+          <>
+            <Button type="primary" danger size="large" style={{ cursor: 'pointer', borderRadius: 2 }} onClick={handleLoginClick}>
+              Get Started ($6)
+            </Button>
+            <Button type="text" disabled>One-time payment. Lifetime access. No subscription</Button>
+          </>
+        ) : (
+          <Button type="primary" danger size="large" style={{ cursor: 'pointer', borderRadius: 2 }} onClick={handleLoginClick}>
+            Sign In
+          </Button>
+        )
+      }
     </Flex>
   )
 }

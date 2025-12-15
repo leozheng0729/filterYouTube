@@ -104,18 +104,18 @@ const IndexOptions = () => {
 
   // 订阅内容
   const subscription = async () => {
-    // try {
-    //     if (user.id && user.email) {
-    //       window.open(
-    //         `${process.env.PLASMO_PUBLIC_STRIPE_LINK}?client_reference_id=${
-    //           user.id
-    //         }&prefilled_email=${encodeURIComponent(user.email)}`,
-    //         "_blank"
-    //       )
-    //     }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+        if (user.id && user.email) {
+          window.open(
+            `${process.env.PLASMO_PUBLIC_STRIPE_LINK}?client_reference_id=${
+              user.id
+            }&prefilled_email=${encodeURIComponent(user.email)}`,
+            "_blank"
+          )
+        }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
