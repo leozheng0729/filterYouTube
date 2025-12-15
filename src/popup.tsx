@@ -11,6 +11,7 @@ import './popup.css';
 
 import type { CheckboxGroupProps } from 'antd/es/checkbox';
 import { getCurrentUser } from "~core/supabase";
+import { getSubscriptionStatus } from "~core/subscribe";
 
 const options: CheckboxGroupProps<string>['options'] = [
   { label: 'Include', value: 'include' },
@@ -105,6 +106,10 @@ function IndexPopup() {
       try {
         const userInfo = await getCurrentUser();
         userInfo && setUser(userInfo);
+        const result = await getSubscriptionStatus(userInfo?.email || '');
+        if (result && result.length > 0) {
+          setShowModule('payed');
+        }
       } catch (error) {
         console.log(error);
       }

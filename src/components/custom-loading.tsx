@@ -15,7 +15,7 @@ const CustomFullScreenLoading: React.FC<CustomFullScreenLoadingProps> = ({
   visible,
   spinnerColor = '#1890ff',
   background = 'rgba(0, 0, 0, 0.75)',
-  message = '加载中...',
+  message = 'Loading...',
   spinnerSize = 48
 }) => {
   if (!visible) return null;
