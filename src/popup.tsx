@@ -107,6 +107,7 @@ function IndexPopup() {
         const userInfo = await getCurrentUser();
         userInfo && setUser(userInfo);
         const result = await getSubscriptionStatus(userInfo?.email || '');
+        // console.log('Subscription status:', result);
         if (result && result.length > 0) {
           setShowModule('payed');
         }
