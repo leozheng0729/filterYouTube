@@ -123,6 +123,7 @@ const IndexOptions = () => {
       <div className="login-inner">
         {/** Loading */}
         <CustomFullScreenLoading visible={pageLoading} />
+        {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/1peUqpoFpJM?si=WaC6EVuqpTnIQVLr" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe> */}
 
         {/** 已登录 */}
         {user && !pageLoading && (
