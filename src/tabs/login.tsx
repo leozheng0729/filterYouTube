@@ -5,17 +5,34 @@ import { useStorage } from "@plasmohq/storage/hook"
 import supabase, { signOut } from '~core/supabase';
 
 import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined } from "@ant-design/icons";
-import { Button, Input, Card, Form, Divider, Flex } from 'antd';
+import { Button, Input, Card, Form, Divider, Flex, Steps } from 'antd';
+
+import type { StepsProps } from 'antd';
+import { createStyles } from 'antd-style';
+
+import iconBase64FilterFill from "data-base64:~/image/filter-fill.png";
+import iconBase64SaveTime from "data-base64:~/image/save-time.png";
+import iconBase64PrivacyBan from "data-base64:~/image/privacy-ban.png";
+import iconBase64LightFast from "data-base64:~/image/light-fast.png";
 
 import GoogleAuthLogin from '~components/google-auth-login';
 import CustomFullScreenLoading from "~components/custom-loading";
 
 import './login.css';
 
+const useStyles = createStyles(({ token }) => ({
+  root: {
+    border: `2px dashed ${token.colorBorder}`,
+    borderRadius: token.borderRadius,
+    padding: token.padding,
+  },
+}));
+
 const IndexOptions = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState("");
+  const { styles } = useStyles();
   const [user, setUser] = useStorage<User>({
     key: "user",
     instance: new Storage({
@@ -118,6 +135,16 @@ const IndexOptions = () => {
     }
   }
 
+  const sharedProps: StepsProps = {
+    items: [
+      { title: 'Finished', description: 'This is a content.' },
+      { title: 'In Progress', description: 'This is a content.' },
+      { title: 'Waiting', description: 'This is a content.' },
+    ],
+    current: 1,
+    className: styles.root,
+  };
+
   return (
     <main className="login-wrapper">
       <div className="login-inner">
@@ -145,59 +172,64 @@ const IndexOptions = () => {
                 >Logout</Button>
               </Flex>
             </Card>
-            <h1>订阅</h1>
+            <h1>How It Works</h1>
+            <Flex vertical gap="middle" style={{ color: '#fff'}}>
+              <Steps {...sharedProps} />
+              {/* <Steps {...sharedProps} styles={stylesFn} type="navigation" /> */}
+            </Flex>
               {/* <Button onClick={subscription}>$6/year</Button> */}
-            <Flex justify="space-between" align="center">
+            <Flex justify="space-between" align="center" style={{ marginBottom: 40, marginTop: 20 }}>
               <Card style={{ width: '22%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
+                  <h2>Complete Payment</h2>
                   <p>$6/year</p>
                 </Flex>
               </Card>
               <Card style={{ width: '22%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
+                  <h2>Install Extension</h2>
                   <p>$6/year</p>
                 </Flex>
               </Card>
               <Card style={{ width: '22%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
+                  <h2>Login In</h2>
                   <p>$6/year</p>
                 </Flex>
               </Card>
               <Card style={{ width: '22%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
+                  <h2>Enjoy Clean Feed</h2>
                   <p>$6/year</p>
                 </Flex>
               </Card>
             </Flex>
+            <h1>Features</h1>
             <Flex justify="space-between" align="center" style={{ margin: '20px 0' }}>
               <Card style={{ width: '48%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
-                  <p>$6/year</p>
+                  <h2><img src={iconBase64FilterFill} width="40"/>Smart Filtering</h2>
+                  <p>Block videos by keywords, channels, or topics automatically</p>
                 </Flex>
               </Card>
               <Card style={{ width: '48%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
-                  <p>$6/year</p>
+                  <h2><img src={iconBase64SaveTime} width="40"/>Save Time</h2>
+                  <p>Stop scrolling through irrelevant content and focus on what matters</p>
                 </Flex>
               </Card>
             </Flex>
             <Flex justify="space-between" align="center">
               <Card style={{ width: '48%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
-                  <p>$6/year</p>
+                  <h2><img src={iconBase64PrivacyBan} width="40"/>Privacy First</h2>
+                  <p>All filtering happens locally. Your data never leaves your browser</p>
                 </Flex>
               </Card>
               <Card style={{ width: '48%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Pro Plan</h2>
-                  <p>$6/year</p>
+                  <h2><img src={iconBase64LightFast} width="40"/>Lightning Fast</h2>
+                  <p>Instant filtering with zero impact on YouTube performance</p>
                 </Flex>
               </Card>
             </Flex>

@@ -47,4 +47,16 @@ html,body {
 
 .login-inner h2 {
   color: #ff4d4f;
+  margin-bottom: 10px;
+}
+.login-inner h2 img {
+  width: 32px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.login-inner h1 {
+  color: #fff;
+  text-align: center;
+  margin: 15px 0;
+  font-size: 32px;
 }
