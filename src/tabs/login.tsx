@@ -2,7 +2,7 @@ import type { User } from "@supabase/supabase-js"
 import { useEffect, useState } from "react"
 import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
-import supabase from '~core/supabase';
+import supabase, { signOut } from '~core/supabase';
 
 import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Button, Input, Card, Form, Divider, Flex } from 'antd';
@@ -123,11 +123,10 @@ const IndexOptions = () => {
       <div className="login-inner">
         {/** Loading */}
         <CustomFullScreenLoading visible={pageLoading} />
-        {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/1peUqpoFpJM?si=WaC6EVuqpTnIQVLr" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe> */}
 
         {/** 已登录 */}
         {user && !pageLoading && (
-          <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%' }}>
+          <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%' }} className="main-flex">
             <h1 className="module-title">Account Information</h1>
             <Card>
               <Flex justify="space-between" align="center">
@@ -138,8 +137,8 @@ const IndexOptions = () => {
                 <Button
                   variant="solid"
                   color="default"
-                  onClick={() => {
-                    supabase.auth.signOut()
+                  onClick={async () => {
+                    await signOut();
                     setUser(null)
                   }}
                   icon={<LogoutOutlined />}
@@ -147,9 +146,61 @@ const IndexOptions = () => {
               </Flex>
             </Card>
             <h1>订阅</h1>
-            <Card>
-              <Button onClick={subscription}>$6/year</Button>
-            </Card>
+              {/* <Button onClick={subscription}>$6/year</Button> */}
+            <Flex justify="space-between" align="center">
+              <Card style={{ width: '22%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+              <Card style={{ width: '22%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+              <Card style={{ width: '22%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+              <Card style={{ width: '22%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+            </Flex>
+            <Flex justify="space-between" align="center" style={{ margin: '20px 0' }}>
+              <Card style={{ width: '48%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+              <Card style={{ width: '48%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+            </Flex>
+            <Flex justify="space-between" align="center">
+              <Card style={{ width: '48%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+              <Card style={{ width: '48%' }}>
+                <Flex justify="space-between" align="left" vertical={true}>
+                  <h2>Pro Plan</h2>
+                  <p>$6/year</p>
+                </Flex>
+              </Card>
+            </Flex>
           </Flex>
         )}
         {/** 登录中 */} 

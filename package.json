@@ -52,7 +52,7 @@
       }
     ],
     "host_permissions": [
-      "https://www.youtube.com/*"
+      "https://*/*"
     ],
     "permissions": [
       "tabs",
