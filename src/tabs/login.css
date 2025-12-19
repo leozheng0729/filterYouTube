@@ -60,3 +60,30 @@ html,body {
   margin: 15px 0;
   font-size: 32px;
 }
+
+
+/* 分步 */
+:where(.css-1m2bkf9).ant-steps .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title,
+:where(.css-dev-only-do-not-override-1m2bkf9).ant-steps .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title {
+  color: #ff4d4f;
+}
+
+:where(.css-1m2bkf9).ant-steps .ant-steps-item-subtitle,
+:where(.css-dev-only-do-not-override-1m2bkf9).ant-steps .ant-steps-item-subtitle {
+  color: #fff;
+}
+
+:where(.css-1m2bkf9).ant-steps .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-description,
+:where(.css-dev-only-do-not-override-1m2bkf9).ant-steps .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-description {
+  color: #ffffff73
+}
+
+:where(.css-1m2bkf9).ant-steps.ant-steps-navigation .ant-steps-item::after,
+:where(.css-dev-only-do-not-override-1m2bkf9).ant-steps.ant-steps-navigation .ant-steps-item::after {
+  border-color: #ffffff73;
+}
+
+:where(.css-1m2bkf9).ant-steps.ant-steps-navigation .ant-steps-item::before,
+:where(.css-dev-only-do-not-override-1m2bkf9).ant-steps.ant-steps-navigation .ant-steps-item::before {
+  height: 0;
+}

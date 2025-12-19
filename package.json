@@ -1,8 +1,8 @@
 {
   "name": "filter-you-tube",
-  "displayName": "Filter you tube",
+  "displayName": "Filter YouTube Video",
   "version": "0.0.1",
-  "description": "filter video",
+  "description": "Filter YouTube Video by Keywords",
   "author": "wp",
   "scripts": {
     "dev": "plasmo dev",

@@ -5,7 +5,7 @@ import { useStorage } from "@plasmohq/storage/hook"
 import supabase, { signOut } from '~core/supabase';
 
 import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined } from "@ant-design/icons";
-import { Button, Input, Card, Form, Divider, Flex, Steps } from 'antd';
+import { Button, Input, Card, Form, Divider, Flex, Steps, Space } from 'antd';
 
 import type { StepsProps } from 'antd';
 import { createStyles } from 'antd-style';
@@ -33,6 +33,7 @@ const IndexOptions = () => {
   const [loginLoading, setLoginLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState("");
   const { styles } = useStyles();
+  const [current, setCurrent] = useState(0);
   const [user, setUser] = useStorage<User>({
     key: "user",
     instance: new Storage({
@@ -140,8 +141,8 @@ const IndexOptions = () => {
       { title: 'Finished', description: 'This is a content.' },
       { title: 'In Progress', description: 'This is a content.' },
       { title: 'Waiting', description: 'This is a content.' },
+      { title: 'Waiting', description: 'This is a content.' },
     ],
-    current: 1,
     className: styles.root,
   };
 
@@ -154,6 +155,27 @@ const IndexOptions = () => {
         {/** 已登录 */}
         {user && !pageLoading && (
           <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%' }} className="main-flex">
+            <Flex justify="center" align="center" style={{ marginBottom: 40 }}>
+              <Space>
+                <Button
+                  type="primary"
+                  size="large"
+                  // onClick={subscription}
+                  style={{ borderRadius: 20 }}
+                  danger={true}
+                >
+                  Buy Now - $6 / Lifetime access
+                </Button>
+                <Button
+                  type="default"
+                  size="large"
+                  // onClick={subscription}
+                  style={{ borderRadius: 20 }}
+                >
+                  Demo Video
+                </Button>
+              </Space>
+            </Flex>
             <h1 className="module-title">Account Information</h1>
             <Card>
               <Flex justify="space-between" align="center">
@@ -173,12 +195,41 @@ const IndexOptions = () => {
               </Flex>
             </Card>
             <h1>How It Works</h1>
-            <Flex vertical gap="middle" style={{ color: '#fff'}}>
-              <Steps {...sharedProps} />
-              {/* <Steps {...sharedProps} styles={stylesFn} type="navigation" /> */}
+            <Flex vertical gap="middle" style={{ backgroundColor: '#1e1e1e', margin: '20px 0' }} className="process-item">
+              <Steps
+                type="navigation"
+                size="small"
+                current={current}
+                items={[
+                  {
+                    title: 'Step 1',
+                    subTitle: 'Complete Payment',
+                    status: 'wait',
+                    description: 'Complete the payment via your logged-in email.',
+                  },
+                  {
+                    title: 'Step 2',
+                    subTitle: 'Install Extension',
+                    status: 'wait',
+                    description: 'Install the "Filter YouTube Video" extension.',
+                  },
+                  {
+                    title: 'Step 3',
+                    subTitle: 'Login In',
+                    status: 'wait',
+                    description: 'Login extension using email.',
+                  },
+                  {
+                    title: 'Step 4',
+                    subTitle: 'Enjoy Clean Feed',
+                    status: 'wait',
+                    description: 'Set filters and browse YouTube without distractions.',
+                  },
+                ]}
+                />
             </Flex>
               {/* <Button onClick={subscription}>$6/year</Button> */}
-            <Flex justify="space-between" align="center" style={{ marginBottom: 40, marginTop: 20 }}>
+            {/* <Flex justify="space-between" align="center" style={{ marginBottom: 40, marginTop: 20 }}>
               <Card style={{ width: '22%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
                   <h2>Complete Payment</h2>
@@ -203,7 +254,7 @@ const IndexOptions = () => {
                   <p>$6/year</p>
                 </Flex>
               </Card>
-            </Flex>
+            </Flex> */}
             <h1>Features</h1>
             <Flex justify="space-between" align="center" style={{ margin: '20px 0' }}>
               <Card style={{ width: '48%' }}>
