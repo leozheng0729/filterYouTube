@@ -14,6 +14,7 @@ import iconBase64FilterFill from "data-base64:~/image/filter-fill.png";
 import iconBase64SaveTime from "data-base64:~/image/save-time.png";
 import iconBase64PrivacyBan from "data-base64:~/image/privacy-ban.png";
 import iconBase64LightFast from "data-base64:~/image/light-fast.png";
+import iconBase64Header from "data-base64:~/image/p.png";
 
 import GoogleAuthLogin from '~components/google-auth-login';
 import CustomFullScreenLoading from "~components/custom-loading";
@@ -155,6 +156,10 @@ const IndexOptions = () => {
         {/** 已登录 */}
         {user && !pageLoading && (
           <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%' }} className="main-flex">
+            <Flex justify="center" align="center" style={{ marginBottom: 20 }} vertical={true} gap="large">
+              <h1 style={{ fontSize: 56 }}>Take Control of Your YouTube Feed</h1>
+              <p className="m-description">Filter out content you don't want to see and regain control of your time. This Chrome extension lets you view the content you want more efficiently.</p>
+            </Flex>
             <Flex justify="center" align="center" style={{ marginBottom: 40 }}>
               <Space>
                 <Button
@@ -169,6 +174,7 @@ const IndexOptions = () => {
                 <Button
                   type="default"
                   size="large"
+                  variant="filled"
                   // onClick={subscription}
                   style={{ borderRadius: 20 }}
                 >
@@ -176,6 +182,7 @@ const IndexOptions = () => {
                 </Button>
               </Space>
             </Flex>
+            <img src={iconBase64Header} width='380px' style={{ margin: '0 auto'}}/>
             <h1 className="module-title">Account Information</h1>
             <Card>
               <Flex justify="space-between" align="center">
