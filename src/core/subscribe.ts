@@ -20,7 +20,7 @@ export const getSubscriptionStatus = async (email: string) => {
   const { payment_intent_id: paymentIntentId } = data?.[0] || {}
 
   const { data: item, error: err } = await supabase
-    .from('product')
+    .from('product_filtervideo')
     .select('*')
     .eq('payment_intent_id', paymentIntentId)
     .eq('product_id', PLASMO_PRODUCT_PRICE_ID)

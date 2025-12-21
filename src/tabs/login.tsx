@@ -7,14 +7,14 @@ import supabase, { signOut } from '~core/supabase';
 import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Button, Input, Card, Form, Divider, Flex, Steps, Space } from 'antd';
 
-import type { StepsProps } from 'antd';
 import { createStyles } from 'antd-style';
 
 import iconBase64FilterFill from "data-base64:~/image/filter-fill.png";
 import iconBase64SaveTime from "data-base64:~/image/save-time.png";
 import iconBase64PrivacyBan from "data-base64:~/image/privacy-ban.png";
 import iconBase64LightFast from "data-base64:~/image/light-fast.png";
-import iconBase64Header from "data-base64:~/image/p.png";
+import iconBase64Header from "data-base64:~/image/logo.png";
+import iconBase64Show from "data-base64:~/image/show.png";
 
 import GoogleAuthLogin from '~components/google-auth-login';
 import CustomFullScreenLoading from "~components/custom-loading";
@@ -72,7 +72,6 @@ const IndexOptions = () => {
         error,
         data: { user }
       } = await supabase.auth.signInWithPassword({ email: username, password });
-
       if (error) {
         // 01. 登录错误
         if (error.message === 'Invalid login credentials' && !user) {
@@ -137,26 +136,26 @@ const IndexOptions = () => {
     }
   }
 
-  const sharedProps: StepsProps = {
-    items: [
-      { title: 'Finished', description: 'This is a content.' },
-      { title: 'In Progress', description: 'This is a content.' },
-      { title: 'Waiting', description: 'This is a content.' },
-      { title: 'Waiting', description: 'This is a content.' },
-    ],
-    className: styles.root,
-  };
-
   return (
-    <main className="login-wrapper">
+    <main className={`login-wrapper ${user ? '' : 'no-login'}`}>
       <div className="login-inner">
+        
         {/** Loading */}
         <CustomFullScreenLoading visible={pageLoading} />
 
         {/** 已登录 */}
-        {user && !pageLoading && (
-          <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%' }} className="main-flex">
-            <Flex justify="center" align="center" style={{ marginBottom: 20 }} vertical={true} gap="large">
+        {user && !pageLoading && (<>
+          <Card className="card-fix">
+            <Flex justify="space-between" align="center">
+              <p>{user.email}</p><LogoutOutlined onClick={async () => {
+                await signOut();
+                setUser(null)
+              }} style={{ cursor: 'pointer' }}/>
+            </Flex>
+          </Card>
+          <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%', paddingTop: 120 }} className="main-flex">
+            <Flex justify="center" align="center" style={{ marginBottom: 24 }} vertical={true} gap="large">
+              <img src={iconBase64Header} style={{ width: 128 }}/>
               <h1 style={{ fontSize: 56 }}>Take Control of Your YouTube Feed</h1>
               <p className="m-description">Filter out content you don't want to see and regain control of your time. This Chrome extension lets you view the content you want more efficiently.</p>
             </Flex>
@@ -165,9 +164,9 @@ const IndexOptions = () => {
                 <Button
                   type="primary"
                   size="large"
-                  // onClick={subscription}
-                  style={{ borderRadius: 20 }}
-                  danger={true}
+                  onClick={subscription}
+                  // style={{ borderRadius: 20 }}
+                  color="red"
                 >
                   Buy Now - $6 / Lifetime access
                 </Button>
@@ -176,33 +175,16 @@ const IndexOptions = () => {
                   size="large"
                   variant="filled"
                   // onClick={subscription}
-                  style={{ borderRadius: 20 }}
+                  // style={{ borderRadius: 20 }}
                 >
                   Demo Video
                 </Button>
               </Space>
             </Flex>
-            <img src={iconBase64Header} width='380px' style={{ margin: '0 auto'}}/>
-            <h1 className="module-title">Account Information</h1>
-            <Card>
-              <Flex justify="space-between" align="center">
-                <div>
-                  <span>Username</span>
-                  <p>{user.email}</p>
-                </div>
-                <Button
-                  variant="solid"
-                  color="default"
-                  onClick={async () => {
-                    await signOut();
-                    setUser(null)
-                  }}
-                  icon={<LogoutOutlined />}
-                >Logout</Button>
-              </Flex>
-            </Card>
+            <img src={iconBase64Show} className="show-main-pic" />
+            {/* <h1 className="module-title">Account Information</h1> */}
             <h1>How It Works</h1>
-            <Flex vertical gap="middle" style={{ backgroundColor: '#1e1e1e', margin: '20px 0' }} className="process-item">
+            <Flex vertical gap="middle" style={{ backgroundColor: '#1e1e1e', margin: '20px 0 40px' }} className="process-item">
               <Steps
                 type="navigation"
                 size="small"
@@ -277,7 +259,7 @@ const IndexOptions = () => {
                 </Flex>
               </Card>
             </Flex>
-            <Flex justify="space-between" align="center">
+            <Flex justify="space-between" align="center" style={{ marginBottom: 60 }}>
               <Card style={{ width: '48%' }}>
                 <Flex justify="space-between" align="left" vertical={true}>
                   <h2><img src={iconBase64PrivacyBan} width="40"/>Privacy First</h2>
@@ -291,7 +273,7 @@ const IndexOptions = () => {
                 </Flex>
               </Card>
             </Flex>
-          </Flex>
+          </Flex></>
         )}
         {/** 登录中 */} 
         {!user && !pageLoading && (

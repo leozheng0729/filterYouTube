@@ -12,6 +12,11 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 )
 
+// 产品ID对应表格
+const productTable = {
+  'prod_TbnSYMJWfIFs3K': 'product_filtervideo',
+}
+
 // This is needed in order to use the Web Crypto API in Deno.
 serve(async (req: { headers: { get: (arg0: string) => any }; text: () => any }) => {
   try {
@@ -102,7 +107,7 @@ serve(async (req: { headers: { get: (arg0: string) => any }; text: () => any }) 
       const paymentDetails = paymentIntent.payment_details;
       const productId = paymentDetails?.order_reference;
 
-      await updateTable('product', {
+      await updateTable(productTable[productId], {
         payid: paymentIntent.id,
         productid: productId,
         amount: paymentIntent.amount,

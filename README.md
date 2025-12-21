@@ -36,3 +36,5 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 todo:
 1. 监听存储本地
 2. 支付UI界面更新
+3. 限制youtube网才亮图标
+4. 支付页面的logo不是最新的
