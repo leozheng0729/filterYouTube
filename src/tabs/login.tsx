@@ -153,7 +153,9 @@ const IndexOptions = () => {
               }} style={{ cursor: 'pointer' }}/>
             </Flex>
           </Card>
-          <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%', paddingTop: 120 }} className="main-flex">
+          <div className="main-color-pic1"></div>
+          <div className="main-color-pic2"></div>
+          <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%', paddingTop: 120, zIndex: 1 }} className="main-flex">
             <Flex justify="center" align="center" style={{ marginBottom: 24 }} vertical={true} gap="large">
               <img src={iconBase64Header} style={{ width: 128 }}/>
               <h1 style={{ fontSize: 56 }}>Take Control of Your YouTube Feed</h1>
