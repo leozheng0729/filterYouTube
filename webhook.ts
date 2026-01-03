@@ -14,7 +14,7 @@ const supabase = createClient(
 
 // 产品ID对应表格
 const productTable = {
-  'prod_TbnSYMJWfIFs3K': 'product_filtervideo',
+  'prod_Tim4FRzSXsjCWD': 'product_filtervideo',
 }
 
 // This is needed in order to use the Web Crypto API in Deno.

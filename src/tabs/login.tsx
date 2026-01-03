@@ -136,6 +136,11 @@ const IndexOptions = () => {
     }
   }
 
+  // 跳转视频页
+  const handleVideoPage = () => {
+    window.open('https://www.youtube.com/watch?v=gElydPOExYU', '_blank')
+  }
+
   return (
     <main className={`login-wrapper ${user ? '' : 'no-login'}`}>
       <div className="login-inner">
@@ -176,7 +181,7 @@ const IndexOptions = () => {
                   type="default"
                   size="large"
                   variant="filled"
-                  // onClick={subscription}
+                  onClick={handleVideoPage}
                   // style={{ borderRadius: 20 }}
                 >
                   Demo Video
