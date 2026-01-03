@@ -1,4 +1,10 @@
+import type { PlasmoCSConfig } from 'plasmo'
 import type { TagInfo } from "~types"
+
+export const config: PlasmoCSConfig = {
+  matches: [" https://www.youtube.com/* "],
+  run_at: "document_end"
+}
 
 ;(function () {
   "use strict"

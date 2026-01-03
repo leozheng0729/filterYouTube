@@ -52,9 +52,7 @@
         ]
       }
     ],
-    "host_permissions": [
-      "https://*/*"
-    ],
+    "host_permissions": [ "https://www.youtube.com/*" ],
     "permissions": [
       "scripting",
       "tabs",
