@@ -1,7 +1,7 @@
 import supabase from "./supabase"
 
 // 产品ID
-const PLASMO_PRODUCT_PRICE_ID = "prod_TbnSYMJWfIFs3K";
+const PLASMO_PRODUCT_PRICE_ID = "prod_Tim4FRzSXsjCWD";
 
 
 // 获取用户订阅状态
