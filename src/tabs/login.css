@@ -1,7 +1,8 @@
 html,body {
   width: 100%;
   height: 100%;
-  background-color: #150101;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+  background-attachment: fixed;
 }
 * { padding: 0; margin: 0; }
 
@@ -16,10 +17,14 @@ html,body {
   align-items: center;
   width: 100%;
   height: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .login-wrapper.no-login {
   justify-content: center;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
 }
 
 .login-inner {
@@ -28,6 +33,8 @@ html,body {
   align-items: center;
   justify-content: center;
   width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 .module-title {
@@ -75,20 +82,29 @@ html,body {
   width: 100%;
   border-radius: 0;
   border: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 .card-fix .ant-card-body {
   padding: 10px;
-  background: #150101;
+  background: rgba(21, 1, 1, 0.9);
   color: #ffffff73;
   border-radius: 0;
-  border-bottom: 1px solid #1e1e1e;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 /* 分步 */
 :where(.css-1m2bkf9).ant-steps .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title,
 :where(.css-dev-only-do-not-override-1m2bkf9).ant-steps .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title {
-  color: #ff4d4f;
+  color: #fff;
+}
+
+:where(.css-dev-only-do-not-override-1m2bkf9).ant-steps .ant-steps-item-process>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title {
+  color: #fff;
 }
 
 :where(.css-1m2bkf9).ant-steps .ant-steps-item-subtitle,
@@ -113,7 +129,7 @@ html,body {
 
 :where(.css-dev-only-do-not-override-1m2bkf9).ant-btn-variant-outlined:not(:disabled):not(.ant-btn-disabled):hover, 
 :where(.css-dev-only-do-not-override-1m2bkf9).ant-btn-variant-dashed:not(:disabled):not(.ant-btn-disabled):hover{
-  color: rgba(0,0,0,0.88);
+  color: #fff;
   border-color: #d9d9d9;
   background-color:#d9d9d9;
 }
@@ -132,6 +148,7 @@ html,body {
   margin: 10px auto 40px;
   width: 60%;
   border-radius: 4px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .main-color-pic1 {
@@ -144,8 +161,9 @@ html,body {
   z-index: 0;
   opacity: 0.3;
   border-radius: 100%;
-  filter: blur(64);
-  background-color: rgba(234, 179, 8, 1);
+  filter: blur(64px);
+  background: radial-gradient(circle, rgba(234, 179, 8, 0.6) 0%, rgba(234, 179, 8, 0) 70%);
+  animation: float 6s ease-in-out infinite;
 }
 
 .main-color-pic2 {
@@ -158,6 +176,143 @@ html,body {
   z-index: 0;
   opacity: 0.3;
   border-radius: 100%;
-  filter: blur(64);
-  background-color: rgba(126, 34, 206, 1);
+  filter: blur(64px);
+  background: radial-gradient(circle, rgba(126, 34, 206, 0.6) 0%, rgba(126, 34, 206, 0) 70%);
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+/* 新增动画效果 */
+@keyframes float {
+  0%, 100% {
+    transform: translate(-190%, -190%) translateY(0px);
+  }
+  50% {
+    transform: translate(-190%, -190%) translateY(-20px);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translate(90%, 90%) translateY(0px);
+  }
+  50% {
+    transform: translate(90%, 90%) translateY(20px);
+  }
+}
+
+/* 新增渐变背景效果 */
+.login-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(126, 34, 206, 0.1) 0%, transparent 50%);
+  z-index: 1;
+}
+
+/* 优化卡片悬停效果 */
+.main-flex .ant-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-flex .ant-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* 优化按钮样式 */
+.ant-btn-primary {
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-flex {
+    width: 95% !important;
+    padding-top: 80px !important;
+  }
+  
+  .show-main-pic {
+    width: 90% !important;
+  }
+  
+  .login-inner h1 {
+    font-size: 24px !important;
+  }
+  
+  .main-flex .m-description {
+    width: 90% !important;
+    font-size: 18px !important;
+  }
+  
+  .main-flex .ant-card {
+    width: 100% !important;
+    margin-bottom: 20px;
+  }
+  
+  .main-color-pic1,
+  .main-color-pic2 {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 53, 0.6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 53, 0.8);
+}
+
+/* 文字选择颜色 */
+::selection {
+  background: rgba(255, 107, 53, 0.3);
+  color: white;
+}
+
+/* 聚焦效果 */
+.ant-input:focus,
+.ant-input-focused {
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+}
+
+.ant-btn:focus {
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+}
+
+/* Steps组件省略号颜色 */
+.custom-steps .ant-steps-item-tail::after {
+  background-color: #ffffff !important;
+}
+
+.custom-steps .ant-steps-item-wait .ant-steps-item-icon {
+  background-color: transparent !important;
+  border-color: #ffffff !important;
+}
+
+.custom-steps .ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon {
+  color: #ffffff !important;
 }

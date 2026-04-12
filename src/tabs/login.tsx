@@ -4,8 +4,8 @@ import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
 import supabase, { signOut } from '~core/supabase';
 
-import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined } from "@ant-design/icons";
-import { Button, Input, Card, Form, Divider, Flex, Steps, Space } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined, CrownOutlined, RocketOutlined, SafetyCertificateOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { Button, Input, Card, Form, Divider, Flex, Steps, Space, Typography, Badge } from 'antd';
 
 import { createStyles } from 'antd-style';
 
@@ -21,11 +21,34 @@ import CustomFullScreenLoading from "~components/custom-loading";
 
 import './login.css';
 
+const { Title, Text } = Typography;
+
 const useStyles = createStyles(({ token }) => ({
   root: {
     border: `2px dashed ${token.colorBorder}`,
     borderRadius: token.borderRadius,
     padding: token.padding,
+  },
+  premiumButton: {
+    background: 'linear-gradient(135deg, #ff6b35, #f7931e, #ff4d4f)',
+    border: 'none',
+    fontWeight: 'bold',
+    boxShadow: '0 4px 15px rgba(255, 107, 53, 0.4)',
+    '&:hover': {
+      background: 'linear-gradient(135deg, #ff4d4f, #ff6b35, #f7931e)',
+      boxShadow: '0 6px 20px rgba(255, 107, 53, 0.6)',
+      transform: 'translateY(-2px)',
+    },
+  },
+  featureCard: {
+    background: 'linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(40, 40, 40, 0.8))',
+    border: `1px solid ${token.colorBorderSecondary}`,
+    borderRadius: '12px',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-4px)',
+      boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+    },
   },
 }));
 
@@ -163,128 +186,196 @@ const IndexOptions = () => {
           <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%', paddingTop: 120, zIndex: 1 }} className="main-flex">
             <Flex justify="center" align="center" style={{ marginBottom: 24 }} vertical={true} gap="large">
               <img src={iconBase64Header} style={{ width: 128 }}/>
-              <h1 style={{ fontSize: 56 }}>Take Control of Your YouTube Feed</h1>
-              <p className="m-description">Filter out content you don't want to see and regain control of your time. This Chrome extension lets you view the content you want more efficiently.</p>
+              <Title level={1} style={{ fontSize: 56, color: '#fff', textAlign: 'center', margin: 0 }}>
+                Take Control of Your YouTube Feed
+              </Title>
+              <Text style={{ fontSize: 18, color: '#ccc', textAlign: 'center', maxWidth: 600 }}>
+                Filter out content you don't want to see and regain control of your time. 
+                This Chrome extension lets you view the content you want more efficiently.
+              </Text>
             </Flex>
             <Flex justify="center" align="center" style={{ marginBottom: 40 }}>
-              <Space>
-                <Button
-                  type="primary"
-                  size="large"
-                  onClick={subscription}
-                  // style={{ borderRadius: 20 }}
-                  color="red"
-                >
-                  Buy Now - $6 / Lifetime access
-                </Button>
+              <Space size="large">
+                <div style={{ position: 'relative' }}>
+                  <Badge.Ribbon 
+                    text="Lifetime Access" 
+                    color="#ff4d4f"
+                    style={{ 
+                      top: '-8px',
+                      right: '-8px',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    <Button
+                      className={styles.premiumButton}
+                      size="large"
+                      onClick={subscription}
+                      icon={<CrownOutlined />}
+                      style={{ 
+                        height: 60,
+                        padding: '0 32px',
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        marginTop: '8px'
+                      }}
+                    >
+                      Upgrade Now - $6
+                    </Button>
+                  </Badge.Ribbon>
+                </div>
                 <Button
                   type="default"
                   size="large"
-                  variant="filled"
+                  variant="outlined"
                   onClick={handleVideoPage}
-                  // style={{ borderRadius: 20 }}
+                  icon={<RocketOutlined />}
+                  style={{ 
+                    height: 60,
+                    padding: '0 32px',
+                    fontSize: 16,
+                    borderColor: '#ff6b35',
+                    color: '#ff6b35',
+                    background: 'rgba(255, 107, 53, 0.1)',
+                    fontWeight: 'bold'
+                  }}
                 >
-                  Demo Video
+                  Watch Demo
                 </Button>
               </Space>
             </Flex>
             <img src={iconBase64Show} className="show-main-pic" />
-            {/* <h1 className="module-title">Account Information</h1> */}
-            <h1>How It Works</h1>
-            <Flex vertical gap="middle" style={{ backgroundColor: '#1e1e1e', margin: '20px 0 40px' }} className="process-item">
+            
+            <Title level={2} style={{ color: '#fff', marginTop: 60, textAlign: 'center' }}>
+              How It Works in 4 Simple Steps
+            </Title>
+            
+            <Flex vertical gap="large" style={{ 
+              background: 'linear-gradient(135deg, rgba(40, 40, 40, 0.95), rgba(30, 30, 30, 0.95))', 
+              margin: '30px 0 50px', 
+              padding: 40, 
+              borderRadius: 20,
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)'
+            }} className="process-item">
               <Steps
                 type="navigation"
-                size="small"
+                size="default"
                 current={current}
+                labelPlacement="vertical"
+                className="custom-steps"
                 items={[
                   {
-                    title: 'Step 1',
-                    subTitle: 'Complete Payment',
-                    status: 'wait',
-                    description: 'Complete the payment via your logged-in email.',
+                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Complete Payment</span>,
+                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Secure one-time payment for lifetime access</span>,
+                    icon: <SafetyCertificateOutlined style={{ color: '#ff6b35', fontSize: '20px' }} />,
                   },
                   {
-                    title: 'Step 2',
-                    subTitle: 'Install Extension',
-                    status: 'wait',
-                    description: 'Install the "Filter YouTube Video" extension.',
+                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Install Extension</span>,
+                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Quick installation from Chrome Web Store</span>,
+                    icon: <RocketOutlined style={{ color: '#f7931e', fontSize: '20px' }} />,
                   },
                   {
-                    title: 'Step 3',
-                    subTitle: 'Login In',
-                    status: 'wait',
-                    description: 'Login extension using email.',
+                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Login</span>,
+                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Access with your registered email</span>,
+                    icon: <ThunderboltOutlined style={{ color: '#7e22ce', fontSize: '20px' }} />,
                   },
                   {
-                    title: 'Step 4',
-                    subTitle: 'Enjoy Clean Feed',
-                    status: 'wait',
-                    description: 'Set filters and browse YouTube without distractions.',
+                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Enjoy Clean Feed</span>,
+                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Customize filters and enjoy distraction-free YouTube</span>,
+                    icon: <CrownOutlined style={{ color: '#10b981', fontSize: '20px' }} />,
                   },
                 ]}
                 />
             </Flex>
-              {/* <Button onClick={subscription}>$6/year</Button> */}
-            {/* <Flex justify="space-between" align="center" style={{ marginBottom: 40, marginTop: 20 }}>
-              <Card style={{ width: '22%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Complete Payment</h2>
-                  <p>$6/year</p>
+            
+            <Title level={2} style={{ color: '#fff', textAlign: 'center' }}>
+              Premium Features You'll Love
+            </Title>
+            
+            <Flex justify="space-between" align="stretch" style={{ margin: '30px 0' }} gap="large">
+              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
+                <Flex justify="start" align="start" vertical={true} gap="middle">
+                  <Flex align="center" gap="small">
+                    <img src={iconBase64FilterFill} width="48"/>
+                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Smart Filtering</Title>
+                  </Flex>
+                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
+                    Block videos by keywords, channels, or topics automatically with our advanced AI-powered filtering system
+                  </Text>
                 </Flex>
               </Card>
-              <Card style={{ width: '22%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Install Extension</h2>
-                  <p>$6/year</p>
-                </Flex>
-              </Card>
-              <Card style={{ width: '22%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Login In</h2>
-                  <p>$6/year</p>
-                </Flex>
-              </Card>
-              <Card style={{ width: '22%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2>Enjoy Clean Feed</h2>
-                  <p>$6/year</p>
-                </Flex>
-              </Card>
-            </Flex> */}
-            <h1>Features</h1>
-            <Flex justify="space-between" align="center" style={{ margin: '20px 0' }}>
-              <Card style={{ width: '48%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2><img src={iconBase64FilterFill} width="40"/>Smart Filtering</h2>
-                  <p>Block videos by keywords, channels, or topics automatically</p>
-                </Flex>
-              </Card>
-              <Card style={{ width: '48%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2><img src={iconBase64SaveTime} width="40"/>Save Time</h2>
-                  <p>Stop scrolling through irrelevant content and focus on what matters</p>
+              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
+                <Flex justify="start" align="start" vertical={true} gap="middle">
+                  <Flex align="center" gap="small">
+                    <img src={iconBase64SaveTime} width="48"/>
+                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Save Time</Title>
+                  </Flex>
+                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
+                    Stop wasting time scrolling through irrelevant content. Focus on what truly matters with personalized content curation
+                  </Text>
                 </Flex>
               </Card>
             </Flex>
-            <Flex justify="space-between" align="center" style={{ marginBottom: 60 }}>
-              <Card style={{ width: '48%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2><img src={iconBase64PrivacyBan} width="40"/>Privacy First</h2>
-                  <p>All filtering happens locally. Your data never leaves your browser</p>
+            
+            <Flex justify="space-between" align="stretch" style={{ marginBottom: 60 }} gap="large">
+              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
+                <Flex justify="start" align="start" vertical={true} gap="middle">
+                  <Flex align="center" gap="small">
+                    <img src={iconBase64PrivacyBan} width="48"/>
+                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Privacy First</Title>
+                  </Flex>
+                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
+                    All filtering happens locally on your device. Your data never leaves your browser - complete privacy guaranteed
+                  </Text>
                 </Flex>
               </Card>
-              <Card style={{ width: '48%' }}>
-                <Flex justify="space-between" align="left" vertical={true}>
-                  <h2><img src={iconBase64LightFast} width="40"/>Lightning Fast</h2>
-                  <p>Instant filtering with zero impact on YouTube performance</p>
+              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
+                <Flex justify="start" align="start" vertical={true} gap="middle">
+                  <Flex align="center" gap="small">
+                    <img src={iconBase64LightFast} width="48"/>
+                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Lightning Fast</Title>
+                  </Flex>
+                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
+                    Instant filtering with zero impact on YouTube performance. Enjoy seamless browsing without any lag or delays
+                  </Text>
                 </Flex>
               </Card>
             </Flex>
+            
+            {/** 限时优惠提示 */}
+            <Card style={{ 
+              background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.1))',
+              border: '1px solid rgba(255, 107, 53, 0.3)',
+              borderRadius: 12,
+              marginBottom: 40
+            }}>
+              <Flex justify="center" align="center" vertical>
+                <Title level={4} style={{ color: '#ff6b35', margin: 0 }}>
+                  🎁 Limited Time Offer
+                </Title>
+                <Text style={{ color: '#ccc', textAlign: 'center' }}>
+                  Get lifetime access for just $6 - a one-time payment with no recurring fees!
+                </Text>
+              </Flex>
+            </Card>
           </Flex></>
         )}
+        
         {/** 登录中 */} 
         {!user && !pageLoading && (
-          <Card style={{ width: 360, borderRadius: 2 }}>
+          <Card style={{ 
+            width: 400, 
+            borderRadius: 16,
+            background: 'rgba(45, 45, 45, 0.95)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <Flex justify="center" style={{ marginBottom: 24 }}>
+              <img src={iconBase64Header} width={64} />
+            </Flex>
+            
             <Form
               form={loginForm}
               onFinish={handleEmailLogin}
@@ -299,8 +390,8 @@ const IndexOptions = () => {
                 ]}
               >
                 <Input 
-                  style={{ borderRadius: 2 }}
-                  placeholder='email format is incorrect'
+                  style={{ borderRadius: 8 }}
+                  placeholder='Enter your email'
                 />
               </Form.Item>
 
@@ -309,8 +400,8 @@ const IndexOptions = () => {
                 rules={[{ required: true, message: 'Please enter password' }]}
               >
                 <Input.Password
-                  style={{ borderRadius: 2 }}
-                  placeholder='Please enter password'
+                  style={{ borderRadius: 8 }}
+                  placeholder='Enter your password'
                   iconRender={(visible) => 
                     visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                   }
@@ -321,19 +412,24 @@ const IndexOptions = () => {
                 <Button 
                   type="primary" 
                   htmlType="submit" 
-                  style={{ borderRadius: 2 }}
+                  style={{ 
+                    borderRadius: 8,
+                    height: 48,
+                    fontSize: 16,
+                    fontWeight: 'bold'
+                  }}
                   icon={loginLoading ? <LoadingOutlined /> : ''}
                   block
                 >
-                  Login
+                  {loginLoading ? 'Signing In...' : 'Sign In / Sign Up'}
                 </Button>
-                <Flex justify="space-between" align="center" style={{ height: 40 }}>
-                  <p style={{ color: '#666', opacity: .5 }}>New users will be automatically registered.</p>
-                  <p style={{ color: 'red' }}>{errorInfo}</p>
+                <Flex justify="space-between" align="center" style={{ height: 40, marginTop: 12 }}>
+                  <Text style={{ color: '#666', fontSize: 12 }}>New users will be automatically registered</Text>
+                  <Text style={{ color: 'red' }}>{errorInfo}</Text>
                 </Flex>
               </Form.Item>
         
-              <Divider style={{ color: '#666', fontSize: 14 }}>or</Divider>
+              <Divider style={{ color: '#666', fontSize: 14 }}>or continue with</Divider>
 
               {/** Google登录 */}
               <GoogleAuthLogin
@@ -346,7 +442,7 @@ const IndexOptions = () => {
                 block
                 size="small"
                 disabled={true}
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 16, color: '#666' }}
               >
                 Forget Password?
               </Button>
