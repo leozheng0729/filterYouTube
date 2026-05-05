@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react"
-import { Button, Flex, Radio, Space, Alert } from 'antd';
+import { Button, Flex, Radio, Space, Alert, Typography } from 'antd';
+import { SettingOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import Keywords from "~components/keywords";
 import Channels from "~components/channelwords";
 import TipsModule from "~components/tips-module";
@@ -21,6 +22,8 @@ interface TipMessage {
   message: string;
   type: 'success' | 'error' | 'warning' | 'info' | '';
 }
+
+const { Text } = Typography;
 
 function IndexPopup() {
   const [user, setUser] = useState(null);
@@ -118,7 +121,7 @@ function IndexPopup() {
     }
     getUserInfo();
   }, []);
-
+  console.log('user==============', user);
   return (
     <div className="popup-container">
       <CustomFullScreenLoading visible={pageLoading} />
@@ -130,6 +133,21 @@ function IndexPopup() {
       {
         showModule === 'payed' && !pageLoading && (
           <Flex justify="center" vertical>
+            <Flex justify="left" gap="4px" className="popup-footer">
+              <Flex align="center" gap={4} style={{ cursor: 'pointer' }} onClick={() => window.open('https://github.com/your-repo/issues', '_blank')}>
+                <EditOutlined style={{ fontSize: '12px', color: '#707070' }} />
+                <Text style={{ fontSize: '12px', color: '#707070' }}>反馈</Text>
+              </Flex>
+              {/* <Flex justify="center">
+                <Text>Filtering has been enabled</Text>
+              </Flex> */}
+              {/* <Flex align="center" gap={6}>
+                <Text style={{ fontSize: '12px', color: '#b3b3b3' }}>Ver1.0.1</Text>
+              </Flex> */}
+            </Flex>
+            <Flex justify="center" gap="4px" className="popup-footer">
+             <Text>Filtering has been enabled</Text>
+            </Flex>
             <Radio.Group
               block
               options={options}
