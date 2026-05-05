@@ -4,8 +4,8 @@ import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
 import supabase, { signOut } from '~core/supabase';
 
-import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined, CrownOutlined, RocketOutlined, SafetyCertificateOutlined, ThunderboltOutlined } from "@ant-design/icons";
-import { Button, Input, Card, Form, Divider, Flex, Steps, Space, Typography, Badge } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined, LogoutOutlined, CrownOutlined, RocketOutlined, ChromeOutlined, LoginOutlined, VideoCameraOutlined, DollarOutlined, EyeOutlined, DatabaseOutlined, LockOutlined, SafetyOutlined } from "@ant-design/icons";
+import { Button, Input, Card, Form, Divider, Flex, Space, Typography, Badge } from 'antd';
 
 import { createStyles } from 'antd-style';
 
@@ -30,25 +30,344 @@ const useStyles = createStyles(({ token }) => ({
     padding: token.padding,
   },
   premiumButton: {
-    background: 'linear-gradient(135deg, #ff6b35, #f7931e, #ff4d4f)',
+    background: 'linear-gradient(to right, #ff0000, #cc0022) !important',
     border: 'none',
     fontWeight: 'bold',
-    boxShadow: '0 4px 15px rgba(255, 107, 53, 0.4)',
+    color: '#fff !important',
+    boxShadow: '0 4px 15px rgba(255, 0, 0, 0.4)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     '&:hover': {
-      background: 'linear-gradient(135deg, #ff4d4f, #ff6b35, #f7931e)',
-      boxShadow: '0 6px 20px rgba(255, 107, 53, 0.6)',
-      transform: 'translateY(-2px)',
+      background: 'linear-gradient(to right, #ff0000, #cc0022) !important',
+      boxShadow: '0 8px 25px rgba(255, 0, 0, 0.6)',
+      transform: 'scale(1.08)',
+    },
+    '&:active': {
+      transform: 'scale(1.04)',
     },
   },
+  featuresSection: {
+    padding: '60px 20px 40px',
+    position: 'relative',
+  },
+  featuresKicker: {
+    color: '#ff0000',
+    fontSize: '14px',
+    fontWeight: 700,
+    letterSpacing: '2px',
+    textAlign: 'center',
+    marginBottom: '16px',
+  },
+  featuresTitle: {
+    color: '#fff !important',
+    fontSize: '48px',
+    fontWeight: 800,
+    textAlign: 'center',
+    margin: '0 0 16px 0',
+    lineHeight: 1.15,
+  },
+  featuresTitleHighlight: {
+    background: 'linear-gradient(to right, #ff0000, #cc0022)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    color: 'transparent',
+  },
+  featuresSubtitle: {
+    color: '#999',
+    fontSize: '16px',
+    textAlign: 'center',
+    marginBottom: '60px',
+    maxWidth: '640px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
   featureCard: {
-    background: 'linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(40, 40, 40, 0.8))',
-    border: `1px solid ${token.colorBorderSecondary}`,
-    borderRadius: '12px',
+    background: 'linear-gradient(135deg, rgba(30, 30, 30, 0.85), rgba(20, 20, 20, 0.85))',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: '16px',
+    overflow: 'hidden',
+    position: 'relative',
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    backdropFilter: 'blur(10px)',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '2px',
+      background: 'linear-gradient(to right, transparent, #ff0000, transparent)',
+      opacity: 0,
+      transition: 'opacity 0.4s ease',
+    },
+    '&:hover': {
+      transform: 'translateY(-8px)',
+      border: '1px solid rgba(255, 0, 0, 0.25)',
+      boxShadow: '0 20px 50px rgba(255, 0, 0, 0.15), 0 0 0 1px rgba(255, 0, 0, 0.1)',
+    },
+    '&:hover::before': {
+      opacity: 1,
+    },
+  },
+  featureIconWrapper: {
+    width: '64px',
+    height: '64px',
+    borderRadius: '14px',
+    background: 'linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(204, 0, 34, 0.05))',
+    border: '1px solid rgba(255, 0, 0, 0.2)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '4px',
+    boxShadow: '0 8px 24px rgba(255, 0, 0, 0.15)',
     transition: 'all 0.3s ease',
+  },
+  featureCardTitle: {
+    color: '#fff !important',
+    fontSize: '22px !important',
+    fontWeight: '700 !important',
+    margin: '8px 0 0 0 !important',
+  },
+  featureCardDesc: {
+    color: '#a8a8a8',
+    fontSize: '15px',
+    lineHeight: 1.7,
+  },
+  privacySection: {
+    padding: '60px 20px 80px',
+    position: 'relative',
+  },
+  privacyKicker: {
+    color: '#ff0000',
+    fontSize: '14px',
+    fontWeight: 700,
+    letterSpacing: '2px',
+    textAlign: 'center',
+    marginBottom: '16px',
+  },
+  privacyTitle: {
+    color: '#fff !important',
+    fontSize: '56px',
+    fontWeight: 800,
+    textAlign: 'center',
+    margin: '0 0 20px 0',
+    lineHeight: 1.1,
+  },
+  privacyTitleHighlight: {
+    background: 'linear-gradient(to right, #ff0000, #cc0022)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    color: 'transparent',
+  },
+  privacySubtitle: {
+    color: '#a0a0a0',
+    fontSize: '17px',
+    textAlign: 'center',
+    marginBottom: '60px',
+    maxWidth: '720px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    lineHeight: 1.6,
+  },
+  privacyGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '24px',
+    maxWidth: '1200px',
+    margin: '0 auto',
+  },
+  privacyCard: {
+    background: 'linear-gradient(135deg, rgba(25, 25, 25, 0.9), rgba(15, 15, 15, 0.9))',
+    border: '1px solid rgba(255, 255, 255, 0.06)',
+    borderRadius: '14px',
+    padding: '28px',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '20px',
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
     '&:hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+      border: '1px solid rgba(255, 0, 0, 0.2)',
+      boxShadow: '0 16px 40px rgba(255, 0, 0, 0.12)',
     },
+  },
+  privacyIconBox: {
+    width: '56px',
+    height: '56px',
+    borderRadius: '12px',
+    background: 'linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(204, 0, 34, 0.05))',
+    border: '1px solid rgba(255, 0, 0, 0.25)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    '& .anticon': {
+      fontSize: '26px',
+      color: '#ff0000',
+    },
+  },
+  privacyCardTitle: {
+    color: '#fff',
+    fontSize: '20px',
+    fontWeight: 700,
+    margin: '0 0 8px 0',
+    lineHeight: 1.3,
+  },
+  privacyCardDesc: {
+    color: '#9a9a9a',
+    fontSize: '15px',
+    lineHeight: 1.6,
+    margin: 0,
+  },
+  ribbonBadge: {
+    display: 'inline-block',
+    paddingTop: '8px',
+    paddingRight: '4px',
+    '& .ant-ribbon': {
+      background: 'linear-gradient(135deg, #ffd700 0%, #ffa500 50%, #ff4500 100%) !important',
+      boxShadow: '0 3px 10px rgba(255, 140, 0, 0.6), 0 0 15px rgba(255, 215, 0, 0.4)',
+      fontSize: '12px !important',
+      fontWeight: '700',
+      padding: '3px 10px !important',
+      height: 'auto !important',
+      lineHeight: '1.3 !important',
+      border: '1.5px solid #ffd700',
+      borderRadius: '14px !important',
+      color: '#fff',
+      textShadow: '0 1px 2px rgba(139, 69, 0, 0.8)',
+      letterSpacing: '0.3px',
+      animation: 'ribbonGlow 2s ease-in-out infinite',
+      zIndex: 10,
+    },
+    '& .ant-ribbon-corner': {
+      display: 'none !important',
+    },
+    '@keyframes ribbonGlow': {
+      '0%, 100%': {
+        boxShadow: '0 3px 10px rgba(255, 140, 0, 0.6), 0 0 15px rgba(255, 215, 0, 0.4)',
+        transform: 'scale(1) rotate(-3deg)',
+      },
+      '50%': {
+        boxShadow: '0 5px 15px rgba(255, 140, 0, 0.8), 0 0 25px rgba(255, 215, 0, 0.6)',
+        transform: 'scale(1.04) rotate(-3deg)',
+      },
+    },
+  },
+  stepsSection: {
+    padding: '80px 20px',
+    position: 'relative',
+  },
+  stepsKicker: {
+    color: '#ff0000',
+    fontSize: '14px',
+    fontWeight: 700,
+    letterSpacing: '2px',
+    textAlign: 'center',
+    marginBottom: '16px',
+  },
+  stepsTitle: {
+    color: '#fff !important',
+    fontSize: '56px',
+    fontWeight: 800,
+    textAlign: 'center',
+    margin: '0 0 16px 0',
+    lineHeight: 1.1,
+  },
+  stepsTitleHighlight: {
+    background: 'linear-gradient(to right, #ff0000, #cc0022)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    color: 'transparent',
+  },
+  stepsSubtitle: {
+    color: '#999',
+    fontSize: '16px',
+    textAlign: 'center',
+    marginBottom: '60px',
+  },
+  stepsWrapper: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: '40px',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: '60px',
+      left: '16%',
+      right: '16%',
+      height: '2px',
+      background: 'linear-gradient(to right, transparent, #ff0000 20%, #ff0000 80%, transparent)',
+      zIndex: 0,
+    },
+  },
+  stepItem: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    position: 'relative',
+    zIndex: 1,
+  },
+  stepIconWrapper: {
+    position: 'relative',
+    marginBottom: '28px',
+  },
+  stepIcon: {
+    width: '80px',
+    height: '80px',
+    borderRadius: '12px',
+    background: 'linear-gradient(135deg, #ff0000 0%, #cc0022 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 10px 40px rgba(255, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    '& .anticon': {
+      fontSize: '48px',
+      color: '#fff',
+    },
+    '&:hover': {
+      transform: 'translateY(-6px) scale(1.03)',
+      boxShadow: '0 20px 50px rgba(255, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+    },
+  },
+  stepBadge: {
+    position: 'absolute',
+    top: '-8px',
+    right: '-8px',
+    width: '36px',
+    height: '36px',
+    borderRadius: '50%',
+    background: '#1a1a1a',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    color: '#fff',
+    fontSize: '12px',
+    fontWeight: 700,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
+    letterSpacing: '0.5px',
+  },
+  stepTitle: {
+    color: '#fff',
+    fontSize: '22px',
+    fontWeight: 700,
+    margin: '0 0 12px 0',
+  },
+  stepDesc: {
+    color: '#999',
+    fontSize: '15px',
+    lineHeight: 1.6,
+    maxWidth: '320px',
+    margin: 0,
   },
 }));
 
@@ -186,8 +505,14 @@ const IndexOptions = () => {
           <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%', paddingTop: 120, zIndex: 1 }} className="main-flex">
             <Flex justify="center" align="center" style={{ marginBottom: 24 }} vertical={true} gap="large">
               <img src={iconBase64Header} style={{ width: 128 }}/>
-              <Title level={1} style={{ fontSize: 56, color: '#fff', textAlign: 'center', margin: 0 }}>
-                Take Control of Your YouTube Feed
+              <Title level={1} style={{ fontSize: 72, color: '#fff', textAlign: 'center', margin: 0 }}>
+                Take Control of Your <span style={{
+                  background: 'linear-gradient(to right, #ff0000, #cc0022)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  color: 'transparent'
+                }}>YouTube</span> Feed
               </Title>
               <Text style={{ fontSize: 18, color: '#ccc', textAlign: 'center', maxWidth: 600 }}>
                 Filter out content you don't want to see and regain control of your time. 
@@ -196,15 +521,13 @@ const IndexOptions = () => {
             </Flex>
             <Flex justify="center" align="center" style={{ marginBottom: 40 }}>
               <Space size="large">
-                <div style={{ position: 'relative' }}>
+                <div className={styles.ribbonBadge}>
                   <Badge.Ribbon 
-                    text="Lifetime Access" 
+                    text="🔥 LIFETIME ACCESS"
                     color="#ff4d4f"
                     style={{ 
-                      top: '-8px',
-                      right: '-8px',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
+                      top: '4px',
+                      right: '-4px',
                     }}
                   >
                     <Button
@@ -246,102 +569,132 @@ const IndexOptions = () => {
             </Flex>
             <img src={iconBase64Show} className="show-main-pic" />
             
-            <Title level={2} style={{ color: '#fff', marginTop: 60, textAlign: 'center' }}>
-              How It Works in 4 Simple Steps
-            </Title>
-            
-            <Flex vertical gap="large" style={{ 
-              background: 'linear-gradient(135deg, rgba(40, 40, 40, 0.95), rgba(30, 30, 30, 0.95))', 
-              margin: '30px 0 50px', 
-              padding: 40, 
-              borderRadius: 20,
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)'
-            }} className="process-item">
-              <Steps
-                type="navigation"
-                size="default"
-                current={current}
-                labelPlacement="vertical"
-                className="custom-steps"
-                items={[
+            <div className={styles.stepsSection}>
+              <div className={styles.stepsKicker}>HOW IT WORKS</div>
+              <h2 className={styles.stepsTitle}>
+                Get Started in <span className={styles.stepsTitleHighlight}>4 Simple Steps</span>
+              </h2>
+              <p className={styles.stepsSubtitle}>
+                No complicated setup. No account needed. Just install and start filtering.
+              </p>
+
+              <div className={styles.stepsWrapper}>
+                {[
                   {
-                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Complete Payment</span>,
-                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Secure one-time payment for lifetime access</span>,
-                    icon: <SafetyCertificateOutlined style={{ color: '#ff6b35', fontSize: '20px' }} />,
+                    num: '01',
+                    icon: <DollarOutlined />,
+                    title: 'Complete Payment',
+                    desc: "Secure one-time payment for lifetime access.",
                   },
                   {
-                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Install Extension</span>,
-                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Quick installation from Chrome Web Store</span>,
-                    icon: <RocketOutlined style={{ color: '#f7931e', fontSize: '20px' }} />,
+                    num: '02',
+                    icon: <ChromeOutlined />,
+                    title: 'Install Extension',
+                    desc: 'Quick installation from Chrome Web Store.',
                   },
                   {
-                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Login</span>,
-                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Access with your registered email</span>,
-                    icon: <ThunderboltOutlined style={{ color: '#7e22ce', fontSize: '20px' }} />,
+                    num: '03',
+                    icon: <LoginOutlined />,
+                    title: 'Login',
+                    desc: 'Access with your registered email.',
+                  },
+                   {
+                    num: '04',
+                    icon: <VideoCameraOutlined />,
+                    title: 'Enjoy Clean Feed',
+                    desc: 'Customize filters and enjoy distraction-free YouTube.',
+                  },
+                ].map((step) => (
+                  <div className={styles.stepItem} key={step.num}>
+                    <div className={styles.stepIconWrapper}>
+                      <div className={styles.stepIcon}>{step.icon}</div>
+                      <div className={styles.stepBadge}>{step.num}</div>
+                    </div>
+                    <h3 className={styles.stepTitle}>{step.title}</h3>
+                    <p className={styles.stepDesc}>{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className={styles.featuresSection}>
+              <div className={styles.featuresKicker}>WHY CHOOSE US</div>
+              <h2 className={styles.featuresTitle}>
+                Premium Features <span className={styles.featuresTitleHighlight}>You'll Love</span>
+              </h2>
+              <p className={styles.featuresSubtitle}>
+                Everything you need to take back control of your YouTube experience — powerful, private, and lightning fast.
+              </p>
+
+              {[
+                [
+                  { icon: iconBase64FilterFill, title: 'Smart Filtering', desc: 'Block videos by keywords, channels, or topics automatically with our advanced AI-powered filtering system.' },
+                  { icon: iconBase64SaveTime, title: 'Save Time', desc: 'Stop wasting time scrolling through irrelevant content. Focus on what truly matters with personalized content curation.' },
+                ],
+                [
+                  { icon: iconBase64PrivacyBan, title: 'Privacy First', desc: 'All filtering happens locally on your device. Your data never leaves your browser — complete privacy guaranteed.' },
+                  { icon: iconBase64LightFast, title: 'Lightning Fast', desc: 'Instant filtering with zero impact on YouTube performance. Enjoy seamless browsing without any lag or delays.' },
+                ],
+              ].map((row, rowIdx) => (
+                <Flex key={rowIdx} justify="space-between" align="stretch" style={{ marginBottom: 24 }} gap="large">
+                  {row.map((item) => (
+                    <Card key={item.title} className={styles.featureCard} style={{ width: '48%', padding: '8px' }}>
+                      <Flex justify="start" align="start" vertical={true} gap="middle">
+                        <div className={styles.featureIconWrapper}>
+                          <img src={item.icon} width="36" />
+                        </div>
+                        <Title level={3} className={styles.featureCardTitle}>{item.title}</Title>
+                        <Text className={styles.featureCardDesc}>{item.desc}</Text>
+                      </Flex>
+                    </Card>
+                  ))}
+                </Flex>
+              ))}
+            </div>
+
+            {/** 隐私模块 */}
+            <div className={styles.privacySection}>
+              <div className={styles.privacyKicker}>PRIVACY FIRST</div>
+              <h2 className={styles.privacyTitle}>
+                Your Privacy is <span className={styles.privacyTitleHighlight}>Our Priority</span>
+              </h2>
+              <p className={styles.privacySubtitle}>
+                YT Filters is built with privacy at its core. All filtering happens locally in your browser.
+              </p>
+
+              <div className={styles.privacyGrid}>
+                {[
+                  {
+                    icon: <EyeOutlined />,
+                    title: 'No Data Collection',
+                    desc: "We don't collect personal data, browsing history, or analytics.",
                   },
                   {
-                    title: <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>Enjoy Clean Feed</span>,
-                    description: <span style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>Customize filters and enjoy distraction-free YouTube</span>,
-                    icon: <CrownOutlined style={{ color: '#10b981', fontSize: '20px' }} />,
+                    icon: <DatabaseOutlined />,
+                    title: 'Local Storage Only',
+                    desc: 'All your preferences are stored locally in your browser.',
                   },
-                ]}
-                />
-            </Flex>
-            
-            <Title level={2} style={{ color: '#fff', textAlign: 'center' }}>
-              Premium Features You'll Love
-            </Title>
-            
-            <Flex justify="space-between" align="stretch" style={{ margin: '30px 0' }} gap="large">
-              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
-                <Flex justify="start" align="start" vertical={true} gap="middle">
-                  <Flex align="center" gap="small">
-                    <img src={iconBase64FilterFill} width="48"/>
-                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Smart Filtering</Title>
-                  </Flex>
-                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
-                    Block videos by keywords, channels, or topics automatically with our advanced AI-powered filtering system
-                  </Text>
-                </Flex>
-              </Card>
-              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
-                <Flex justify="start" align="start" vertical={true} gap="middle">
-                  <Flex align="center" gap="small">
-                    <img src={iconBase64SaveTime} width="48"/>
-                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Save Time</Title>
-                  </Flex>
-                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
-                    Stop wasting time scrolling through irrelevant content. Focus on what truly matters with personalized content curation
-                  </Text>
-                </Flex>
-              </Card>
-            </Flex>
-            
-            <Flex justify="space-between" align="stretch" style={{ marginBottom: 60 }} gap="large">
-              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
-                <Flex justify="start" align="start" vertical={true} gap="middle">
-                  <Flex align="center" gap="small">
-                    <img src={iconBase64PrivacyBan} width="48"/>
-                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Privacy First</Title>
-                  </Flex>
-                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
-                    All filtering happens locally on your device. Your data never leaves your browser - complete privacy guaranteed
-                  </Text>
-                </Flex>
-              </Card>
-              <Card className={styles.featureCard} style={{ width: '48%', padding: 24 }}>
-                <Flex justify="start" align="start" vertical={true} gap="middle">
-                  <Flex align="center" gap="small">
-                    <img src={iconBase64LightFast} width="48"/>
-                    <Title level={3} style={{ color: '#fff', margin: 0 }}>Lightning Fast</Title>
-                  </Flex>
-                  <Text style={{ color: '#ccc', lineHeight: 1.6 }}>
-                    Instant filtering with zero impact on YouTube performance. Enjoy seamless browsing without any lag or delays
-                  </Text>
-                </Flex>
-              </Card>
-            </Flex>
+                  {
+                    icon: <LockOutlined />,
+                    title: 'No Third Party Sharing',
+                    desc: 'Your data is never sold or shared with third parties.',
+                  },
+                  {
+                    icon: <SafetyOutlined />,
+                    title: 'Minimal Permissions',
+                    desc: 'We only request permissions essential for filtering to work.',
+                  },
+                ].map((item) => (
+                  <div className={styles.privacyCard} key={item.title}>
+                    <div className={styles.privacyIconBox}>{item.icon}</div>
+                    <div style={{ flex: 1 }}>
+                      <h3 className={styles.privacyCardTitle}>{item.title}</h3>
+                      <p className={styles.privacyCardDesc}>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
             
             {/** 限时优惠提示 */}
             <Card style={{ 

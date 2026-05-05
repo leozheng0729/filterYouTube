@@ -50,9 +50,9 @@ html,body {
 
 .main-flex :where(.css-dev-only-do-not-override-1m2bkf9).ant-card,
 .main-flex :where(.css-1m2bkf9).ant-card {
-  background: #1e1e1e;
+  /* background: #1e1e1e; */
   color: #fff;
-  border-color: #1e1e1e;
+  /* border-color: #1e1e1e; */
 }
 
 .main-flex .m-description {
