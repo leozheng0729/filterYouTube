@@ -63,3 +63,73 @@
 .popup-actions .ant-space-item {
   width: 100%;
 }
+
+/* Remove Ads / Remove Shorts switches */
+.popup-switches {
+  padding: 10px 12px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+.popup-switches .ant-switch.ant-switch-checked {
+  background: #ff4d4f !important;
+}
+.popup-switches .ant-switch.ant-switch-checked:hover {
+  background: #ff7875 !important;
+}
+
+/* ============ Filtering 状态提示 ============ */
+.popup-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.popup-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.popup-status-text {
+  color: inherit;
+}
+.popup-status-text b {
+  font-weight: 600;
+}
+/* 启用态：绿色 */
+.popup-status-enabled {
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #389e0d;
+}
+.popup-status-enabled .popup-status-dot {
+  background: #52c41a;
+  box-shadow: 0 0 0 3px rgba(82, 196, 26, 0.15);
+}
+/* 禁用态：红色，并带点击引导 */
+.popup-status-disabled {
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #cf1322;
+  cursor: pointer;
+}
+.popup-status-disabled:hover {
+  background: #ffe7e4;
+  border-color: #ff7875;
+}
+.popup-status-disabled .popup-status-dot {
+  background: #ff4d4f;
+  box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.15);
+  animation: popup-status-pulse 1.6s ease-in-out infinite;
+}
+@keyframes popup-status-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.15); }
+  50%      { box-shadow: 0 0 0 6px rgba(255, 77, 79, 0.05); }
+}

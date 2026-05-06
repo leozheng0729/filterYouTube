@@ -16,7 +16,36 @@ export const config: PlasmoCSConfig = {
     channelNames: '#channel-name, .ytd-channel-name a, #byline a, ytd-channel-name a, .ytd-video-meta-block #channel-name, #channel-info #channel-name, [class*="channel"] a',
     shortsShelf: 'ytd-rich-shelf-renderer:has(#title-text #title:contains("Shorts"))',
     shortsShelfFallback: "ytd-rich-shelf-renderer",
-    shortsTitle: "#title-text"
+    shortsTitle: "#title-text",
+    // 广告相关选择器
+    ads: [
+      "ytd-ad-slot-renderer",
+      "ytd-in-feed-ad-layout-renderer",
+      "ytd-promoted-sparkles-text-search-renderer",
+      "ytd-promoted-video-renderer",
+      "ytd-display-ad-renderer",
+      "ytd-search-pyv-renderer",
+      "ytd-statement-banner-renderer",
+      "ytd-action-companion-ad-renderer",
+      "ytd-banner-promo-renderer",
+      ".ytp-ad-module",
+      ".video-ads",
+      "#player-ads",
+      "#masthead-ad"
+    ].join(","),
+    // Shorts 相关选择器
+    shorts: [
+      "ytd-reel-shelf-renderer",
+      "ytd-reel-item-renderer",
+      "ytd-rich-shelf-renderer[is-shorts]",
+      "ytd-shorts",
+      "ytd-guide-entry-renderer a[title='Shorts']",
+      "ytd-mini-guide-entry-renderer[aria-label='Shorts']",
+      "ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts])",
+      "ytd-rich-item-renderer:has(a[href*='/shorts/'])",
+      "ytd-video-renderer:has(a[href*='/shorts/'])",
+      "grid-shelf-view-model:has(a[href*='/shorts/'])"
+    ].join(",")
   }
 
   // Enhanced state variables
@@ -27,6 +56,8 @@ export const config: PlasmoCSConfig = {
     disabled: false,
     matchType: "contains", // "contains", "exact", "whole-word" / 固定值
     channelFilterType: "include", // "include" or "exclude" / 固定值
+    removeAds: false,
+    removeShorts: false,
   }
   let filterEnabled = !filterSettings.disabled // 是否启动
   let observer = null
@@ -42,6 +73,15 @@ export const config: PlasmoCSConfig = {
         applyFilter()
         setupObserver()
       }, 500)
+
+      // 周期兜底：YouTube 首页广告常常是滚动或 SPA 切换时懒加载，
+      // observer 在极少数情况下可能漏掉。每 2s 执行一次仅广告/Shorts 的轻量扫描
+      // 注意：仅在总开关（filterEnabled）开启时才生效
+      setInterval(() => {
+        if (!filterEnabled) return
+        if (filterSettings.removeAds) applyAdsFilter()
+        if (filterSettings.removeShorts) applyShortsFilter()
+      }, 2000)
     } catch (error) {}
   }
 
@@ -63,7 +103,9 @@ export const config: PlasmoCSConfig = {
         channels: newSettings.channels.map((item: TagInfo) => item.value),
         keywords: newSettings.keywords.map((item: TagInfo) => item.value),
         disabled: newSettings.disabled,
-        mode: newSettings.mode
+        mode: newSettings.mode,
+        removeAds: !!newSettings.removeAds,
+        removeShorts: !!newSettings.removeShorts
       };
       
       filterSettings = { ...filterSettings, ...extractedData };
@@ -80,6 +122,11 @@ export const config: PlasmoCSConfig = {
   function applyFilter() {
     requestAnimationFrame(() => {
       try {
+        // 广告与 Shorts 过滤受总开关（Toggle）约束：
+        // 仅在 filterEnabled=true 时执行隐藏；关闭时会在函数内部走恢复分支
+        applyAdsFilter()
+        applyShortsFilter()
+
         if (!filterEnabled) {
           showAllVideos()
           showAllSections()
@@ -376,6 +423,126 @@ export const config: PlasmoCSConfig = {
     })
   }
 
+  // ============= 广告过滤 =============
+  // 核心规则（简单直接、最稳）：遍历所有 ytd-rich-item-renderer，
+  // 只要其内部任意后代元素的 tag 名包含 "-ad-" 片段（如 ytd-ad-slot-renderer /
+  // ytd-in-feed-ad-layout-renderer / ad-badge-view-model / ad-avatar-view-model /
+  // ytd-promoted-video-renderer 等都满足），就判定整个 item 为广告并隐藏。
+  // 说明：使用 "-ad-" / "-ad" / "ad-" 边界匹配，避免 "-add-" / "header-" 等误杀
+  const AD_TAG_REGEX = /(^|-)ads?(-|$)|(^|-)promoted(-|$)/i
+
+  function hideAdElement(target: HTMLElement) {
+    // 每次都强制写，防止 YouTube 在 re-render 时清掉 style 但 data-* 还在的情况
+    target.style.setProperty("display", "none", "important")
+    if (target.getAttribute("data-tubefiltr-ads-hidden") !== "true") {
+      target.setAttribute("data-tubefiltr-ads-hidden", "true")
+    }
+  }
+
+  // 判断一个 feed item 内部是否含有 tag 名带 ad/ads/promoted 片段的后代
+  function hasAdChild(root: Element): boolean {
+    const all = root.getElementsByTagName("*")
+    for (let i = 0; i < all.length; i++) {
+      const tag = all[i].tagName.toLowerCase()
+      // 仅检查自定义元素（含连字符），避免 <address> 等原生标签误判
+      if (tag.includes("-") && AD_TAG_REGEX.test(tag)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function applyAdsFilter() {
+    // 仅在总开关（filterEnabled）开启 且 removeAds 开启 时执行隐藏
+    if (filterEnabled && filterSettings.removeAds) {
+      // 0. 补写：对历史已经打过标记但内联 style 被 YouTube 清掉的元素，重新强制隐藏
+      document
+        .querySelectorAll('[data-tubefiltr-ads-hidden="true"]')
+        .forEach((el: HTMLElement) => {
+          el.style.setProperty("display", "none", "important")
+        })
+
+      // 1. 遍历所有 ytd-rich-item-renderer，内部有带 -ad- 子元素就整体隐藏
+      const items = document.querySelectorAll("ytd-rich-item-renderer")
+      items.forEach((item: HTMLElement) => {
+        if (hasAdChild(item)) {
+          hideAdElement(item)
+        }
+      })
+
+      // 兼容其它位置的广告容器（搜索结果页、播放器内嵌、顶栏 Masthead 等）
+      const otherAdContainers = document.querySelectorAll(
+        "ytd-search-pyv-renderer, ytd-promoted-video-renderer, ytd-display-ad-renderer, ytd-statement-banner-renderer, ytd-action-companion-ad-renderer, ytd-banner-promo-renderer, ytd-ad-slot-renderer, .ytp-ad-module, .video-ads, #player-ads, #masthead-ad"
+      )
+      otherAdContainers.forEach((el: HTMLElement) => {
+        const wrapper =
+          (el.closest("ytd-rich-item-renderer") as HTMLElement) || el
+        hideAdElement(wrapper)
+      })
+    } else {
+      // 恢复之前被广告过滤器隐藏的元素
+      const hiddenAds = document.querySelectorAll(
+        '[data-tubefiltr-ads-hidden="true"]'
+      )
+      hiddenAds.forEach((el: HTMLElement) => {
+        el.style.display = ""
+        el.removeAttribute("data-tubefiltr-ads-hidden")
+      })
+    }
+  }
+
+  // ============= Shorts 过滤 =============
+  function applyShortsFilter() {
+    // 仅在总开关（filterEnabled）开启 且 removeShorts 开启 时执行隐藏
+    if (filterEnabled && filterSettings.removeShorts) {
+      // 1. 通过选择器隐藏明显的 Shorts 元素
+      const shortsElements = document.querySelectorAll(SELECTORS.shorts)
+      shortsElements.forEach((el: HTMLElement) => {
+        hideShortsElement(el)
+      })
+
+      // 2. 按标题识别 Shorts 货架（多语言兼容：Shorts 在各语言中基本不翻译）
+      const shelves = document.querySelectorAll(
+        "ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-rich-section-renderer"
+      )
+      shelves.forEach((shelf: HTMLElement) => {
+        const titleEl = shelf.querySelector("#title-text, #title")
+        const titleText = (titleEl?.textContent || "").toLowerCase()
+        if (titleText.includes("shorts")) {
+          hideShortsElement(shelf)
+        }
+      })
+
+      // 3. 侧边导航 Shorts 入口
+      document
+        .querySelectorAll("ytd-guide-entry-renderer, ytd-mini-guide-entry-renderer")
+        .forEach((el: HTMLElement) => {
+          const text = (el.textContent || "").trim().toLowerCase()
+          const href = el.querySelector("a")?.getAttribute("href") || ""
+          if (text === "shorts" || href === "/shorts" || href.startsWith("/shorts")) {
+            hideShortsElement(el)
+          }
+        })
+    } else {
+      // 恢复之前被 Shorts 过滤器隐藏的元素
+      const hiddenShorts = document.querySelectorAll(
+        '[data-tubefiltr-shorts-hidden="true"]'
+      )
+      hiddenShorts.forEach((el: HTMLElement) => {
+        el.style.display = ""
+        el.removeAttribute("data-tubefiltr-shorts-hidden")
+      })
+    }
+  }
+
+  function hideShortsElement(el: HTMLElement) {
+    // 每次都强制写，防止 YouTube re-render 覆盖
+    el.style.setProperty("display", "none", "important")
+    if (el.getAttribute("data-tubefiltr-shorts-hidden") !== "true") {
+      el.setAttribute("data-tubefiltr-shorts-hidden", "true")
+    }
+  }
+
   // 添加高亮样式
   function addHighlightStyles() {
     if (!document.getElementById("tubefiltr-styles")) {
@@ -389,6 +556,13 @@ export const config: PlasmoCSConfig = {
           border-radius: 3px;
           font-weight: 600;
           box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        /* 兜底：YouTube 有时会清掉内联 style，所以用属性选择器 + !important 强制隐藏 */
+        [data-tubefiltr-ads-hidden="true"],
+        [data-tubefiltr-shorts-hidden="true"],
+        [data-tubefiltr-hidden="true"],
+        [data-tubefiltr-section-hidden="true"] {
+          display: none !important;
         }
       `
       document.head.appendChild(style)
@@ -415,7 +589,17 @@ export const config: PlasmoCSConfig = {
               const element = node as Element
               return (
                 element.matches(SELECTORS.videoContainers) ||
-                element.querySelector(SELECTORS.videoContainers)
+                element.querySelector(SELECTORS.videoContainers) ||
+                (filterSettings.removeAds &&
+                  (element.matches(SELECTORS.ads) ||
+                    element.querySelector(SELECTORS.ads) ||
+                    // YouTube 常常先插入空的 feed item 壳，随后再注入广告内容；
+                    // 这里监听 ytd-rich-item-renderer 的新增也触发重扫，避免漏网
+                    element.matches("ytd-rich-item-renderer") ||
+                    element.querySelector("ytd-rich-item-renderer"))) ||
+                (filterSettings.removeShorts &&
+                  (element.matches(SELECTORS.shorts) ||
+                    element.querySelector(SELECTORS.shorts)))
               )
             }
             return false
@@ -441,11 +625,16 @@ export const config: PlasmoCSConfig = {
   // 监听来自popup的消息
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "refreshFilter") {
-      if (message.settings) {
-        filterSettings = { ...filterSettings, ...message.settings }
-      }
+      // 先从 storage 拉最新配置，再合并消息里带的增量设置，
+      // 避免 loadSettings 覆盖掉消息带过来的新值（popup 可能在写入 storage 前就发消息）
       loadSettings()
         .then(() => {
+          if (message.settings) {
+            filterSettings = { ...filterSettings, ...message.settings }
+            if (typeof message.settings.disabled === "boolean") {
+              filterEnabled = message.settings.disabled === false
+            }
+          }
           applyFilter()
           sendResponse({ success: true })
         })

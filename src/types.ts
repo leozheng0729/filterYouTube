@@ -7,6 +7,8 @@ export interface FilterSettings {
   channels: TagInfo[];
   disabled: boolean;
   mode: string;
+  removeAds: boolean;
+  removeShorts: boolean;
 }
 
 export const DEFAULT_SETTINGS: FilterSettings = {
@@ -14,4 +16,6 @@ export const DEFAULT_SETTINGS: FilterSettings = {
   channels: [],
   disabled: false,
   mode: "",
+  removeAds: false,
+  removeShorts: false,
 };

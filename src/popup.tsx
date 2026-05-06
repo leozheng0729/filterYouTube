@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import { Button, Flex, Radio, Space, Alert, Typography } from 'antd';
+import { Button, Flex, Radio, Space, Alert, Typography, Switch } from 'antd';
 import { SettingOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import Keywords from "~components/keywords";
 import Channels from "~components/channelwords";
@@ -41,7 +41,9 @@ function IndexPopup() {
         channels: newSettings.channels.map(item => item.value),
         keywords: newSettings.keywords.map(item => item.value),
         disabled: newSettings.disabled,
-        mode: newSettings.mode
+        mode: newSettings.mode,
+        removeAds: newSettings.removeAds,
+        removeShorts: newSettings.removeShorts
       };
       // 通知当前标签页刷新
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -94,11 +96,26 @@ function IndexPopup() {
     toggleTips(`Mode changed to ${e.target.value}`, 'info');
   }
 
+  // 7. 切换 Remove Ads
+  const toggleRemoveAds = (checked: boolean) => {
+    const newSettings = { ...settings, removeAds: checked };
+    saveSettings(newSettings);
+    toggleTips(`Remove Ads ${checked ? 'enabled' : 'disabled'}`, checked ? 'success' : 'warning');
+  }
+
+  // 8. 切换 Remove Shorts
+  const toggleRemoveShorts = (checked: boolean) => {
+    const newSettings = { ...settings, removeShorts: checked };
+    saveSettings(newSettings);
+    toggleTips(`Remove Shorts ${checked ? 'enabled' : 'disabled'}`, checked ? 'success' : 'warning');
+  }
+
   // 初始化加载设置
   useEffect(() => {
     chrome.storage.sync.get(['filterSettings'], (result) => {
       if (result.filterSettings && result.filterSettings?.mode !== '') {
-        setSettings(result.filterSettings);
+        // 合并默认值，保证新增字段（如 removeAds/removeShorts）在老数据上有默认值（false）
+        setSettings({ ...DEFAULT_SETTINGS, ...result.filterSettings });
         return;
       }
       setSettings({ ...DEFAULT_SETTINGS, mode: 'include' });
@@ -121,7 +138,7 @@ function IndexPopup() {
     }
     getUserInfo();
   }, []);
-  console.log('user==============', user);
+
   return (
     <div className="popup-container">
       <CustomFullScreenLoading visible={pageLoading} />
@@ -133,21 +150,31 @@ function IndexPopup() {
       {
         showModule === 'payed' && !pageLoading && (
           <Flex justify="center" vertical>
-            <Flex justify="left" gap="4px" className="popup-footer">
+            <Flex justify="space-between" gap="4px" className="popup-footer">
               <Flex align="center" gap={4} style={{ cursor: 'pointer' }} onClick={() => window.open('https://github.com/your-repo/issues', '_blank')}>
                 <EditOutlined style={{ fontSize: '12px', color: '#707070' }} />
                 <Text style={{ fontSize: '12px', color: '#707070' }}>反馈</Text>
               </Flex>
-              {/* <Flex justify="center">
-                <Text>Filtering has been enabled</Text>
-              </Flex> */}
-              {/* <Flex align="center" gap={6}>
+              <Flex align="center" gap={6}>
                 <Text style={{ fontSize: '12px', color: '#b3b3b3' }}>Ver1.0.1</Text>
-              </Flex> */}
+              </Flex>
             </Flex>
-            <Flex justify="center" gap="4px" className="popup-footer">
-             <Text>Filtering has been enabled</Text>
-            </Flex>
+            <div
+              className={`popup-status ${settings.disabled ? 'popup-status-disabled' : 'popup-status-enabled'}`}
+              onClick={settings.disabled ? toggleDisabled : undefined}
+              role={settings.disabled ? 'button' : undefined}
+            >
+              <span className="popup-status-dot" />
+              {settings.disabled ? (
+                <span className="popup-status-text">
+                  Filtering is <b>disabled</b> — click here to enable
+                </span>
+              ) : (
+                <span className="popup-status-text">
+                  Filtering is <b>enabled</b>
+                </span>
+              )}
+            </div>
             <Radio.Group
               block
               options={options}
@@ -159,6 +186,16 @@ function IndexPopup() {
               size="large"
               style={{ width: '100%' }}
             />
+            <Flex justify="space-between" align="center" className="popup-switches">
+              <Flex align="center" gap={8}>
+                <Switch size="small" checked={settings.removeAds} onChange={toggleRemoveAds} />
+                <Text style={{ fontSize: '13px' }}>Remove Ads</Text>
+              </Flex>
+              <Flex align="center" gap={8}>
+                <Switch size="small" checked={settings.removeShorts} onChange={toggleRemoveShorts} />
+                <Text style={{ fontSize: '13px' }}>Remove Shorts</Text>
+              </Flex>
+            </Flex>
             <Space direction="vertical" style={{ width: '100%', marginTop: '12px' }} size="large">
               <Keywords toggleTips={toggleTips} keywords={settings.keywords} saveKeywords={saveKeywords} />
               <Channels toggleTips={toggleTips} channels={settings.channels} saveKeywords={saveKeywords} />
