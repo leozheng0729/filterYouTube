@@ -15,6 +15,7 @@ import iconBase64PrivacyBan from "data-base64:~/image/privacy-ban.png";
 import iconBase64LightFast from "data-base64:~/image/light-fast.png";
 import iconBase64Header from "data-base64:~/image/logo.png";
 import iconBase64Show from "data-base64:~/image/show.png";
+import iconBase64Slow from "data-base64:~/image/slow.png";
 
 import GoogleAuthLogin from '~components/google-auth-login';
 import CustomFullScreenLoading from "~components/custom-loading";
@@ -753,7 +754,7 @@ const IndexOptions = () => {
             </div>
             
             <img src={iconBase64Show} className="show-main-pic" />
-            
+            <img src={iconBase64Slow} className="show-slow-pic" />
             <div id="how-it-works" className={styles.stepsSection}>
               <div className={styles.stepsKicker}>HOW IT WORKS</div>
               <h2 className={styles.stepsTitle}>
