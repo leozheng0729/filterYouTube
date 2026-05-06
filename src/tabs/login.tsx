@@ -565,7 +565,7 @@ const IndexOptions = () => {
 
   // 跳转视频页
   const handleVideoPage = () => {
-    window.open('https://www.youtube.com/watch?v=gElydPOExYU', '_blank')
+    window.open('https://www.youtube.com/watch?v=P5BHl3LOy7A', '_blank')
   }
 
   return (
