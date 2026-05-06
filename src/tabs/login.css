@@ -316,3 +316,68 @@ html,body {
 .custom-steps .ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon {
   color: #ffffff !important;
 }
+
+/* ============ 右侧锚点导航 ============ */
+.login-anchor-nav {
+  position: fixed;
+  top: 50%;
+  right: 28px;
+  transform: translateY(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 12px;
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.login-anchor-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  color: #a0a0a0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.login-anchor-item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+}
+.login-anchor-item .login-anchor-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+.login-anchor-item:hover .login-anchor-dot {
+  background: #ff7875;
+}
+.login-anchor-item.is-active {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(255, 0, 0, 0.18), rgba(204, 0, 34, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(255, 0, 0, 0.35);
+}
+.login-anchor-item.is-active .login-anchor-dot {
+  background: #ff0000;
+  box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.18);
+}
+.login-anchor-item .login-anchor-label {
+  white-space: nowrap;
+}
+
+/* 移动端隐藏 */
+@media (max-width: 768px) {
+  .login-anchor-nav {
+    display: none;
+  }
+}

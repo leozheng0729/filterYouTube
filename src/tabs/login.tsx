@@ -375,6 +375,7 @@ const IndexOptions = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState("");
+  const [activeAnchor, setActiveAnchor] = useState<string>("how-it-works");
   const { styles } = useStyles();
   const [current, setCurrent] = useState(0);
   const [user, setUser] = useStorage<User>({
@@ -400,6 +401,90 @@ const IndexOptions = () => {
     }
     init();
   }, [])
+
+  // 获取真正的滚动容器（login-wrapper 或 window）
+  const getScrollContainer = (): HTMLElement | Window => {
+    const wrapper = document.querySelector(".login-wrapper") as HTMLElement | null;
+    if (wrapper && wrapper.scrollHeight > wrapper.clientHeight) {
+      return wrapper;
+    }
+    return window;
+  }
+
+  // 监听滚动，更新当前激活的锚点
+  useEffect(() => {
+    if (!user) return;
+    const sectionIds = ["how-it-works", "features", "privacy"];
+    const handleScroll = () => {
+      const container = getScrollContainer();
+      const isWindow = container === window;
+      const viewportHeight = isWindow
+        ? window.innerHeight
+        : (container as HTMLElement).clientHeight;
+      const scrollTop = isWindow
+        ? window.scrollY || document.documentElement.scrollTop
+        : (container as HTMLElement).scrollTop;
+      const scrollHeight = isWindow
+        ? document.documentElement.scrollHeight
+        : (container as HTMLElement).scrollHeight;
+
+      // 如果已经滚动到接近底部（2px 容差），直接激活最后一个锚点
+      if (scrollTop + viewportHeight >= scrollHeight - 2) {
+        setActiveAnchor(sectionIds[sectionIds.length - 1]);
+        return;
+      }
+
+      // 以视口中线为判定基准，选择距离中线最近且顶部已越过中线的 section
+      // 若都没越过中线，则取第一个
+      const anchorLine = viewportHeight * 0.35; // 视口上方 35% 作为激活线，兼顾顶部 fixed 导航
+      let current = sectionIds[0];
+      let minDistance = Infinity;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        // 已经进入视口顶部激活线以上（含少量容差）
+        if (top - anchorLine <= 0) {
+          const distance = Math.abs(top - anchorLine);
+          if (distance < minDistance) {
+            minDistance = distance;
+            current = id;
+          }
+        }
+      }
+      setActiveAnchor(current);
+    };
+    // 初次挂载稍作延迟，等布局完成
+    const timer = setTimeout(handleScroll, 0);
+    const container = getScrollContainer();
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      clearTimeout(timer);
+      container.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [user])
+
+  // 点击锚点：平滑滚动到对应模块
+  const handleAnchorClick = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const container = getScrollContainer();
+    const offset = 80;
+    if (container === window) {
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
+    } else {
+      const wrapper = container as HTMLElement;
+      const top =
+        el.getBoundingClientRect().top -
+        wrapper.getBoundingClientRect().top +
+        wrapper.scrollTop -
+        offset;
+      wrapper.scrollTo({ top, behavior: "smooth" });
+    }
+  }
 
   // 登录回调
   const handleEmailLogin = async () => {
@@ -500,6 +585,26 @@ const IndexOptions = () => {
               }} style={{ cursor: 'pointer' }}/>
             </Flex>
           </Card>
+          <nav className="login-anchor-nav" aria-label="Page sections">
+            {[
+              { id: "how-it-works", label: "How It Works" },
+              { id: "features", label: "Features" },
+              { id: "privacy", label: "Privacy" },
+            ].map((item) => (
+              <a
+                key={item.id}
+                className={`login-anchor-item ${activeAnchor === item.id ? "is-active" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleAnchorClick(item.id);
+                }}
+                href={`#${item.id}`}
+              >
+                <span className="login-anchor-dot" />
+                <span className="login-anchor-label">{item.label}</span>
+              </a>
+            ))}
+          </nav>
           <div className="main-color-pic1"></div>
           <div className="main-color-pic2"></div>
           <Flex justify="space-between" align="left" vertical={true} style={{ width: '80%', paddingTop: 120, zIndex: 1 }} className="main-flex">
@@ -569,7 +674,7 @@ const IndexOptions = () => {
             </Flex>
             <img src={iconBase64Show} className="show-main-pic" />
             
-            <div className={styles.stepsSection}>
+            <div id="how-it-works" className={styles.stepsSection}>
               <div className={styles.stepsKicker}>HOW IT WORKS</div>
               <h2 className={styles.stepsTitle}>
                 Get Started in <span className={styles.stepsTitleHighlight}>4 Simple Steps</span>
@@ -617,7 +722,7 @@ const IndexOptions = () => {
               </div>
             </div>
             
-            <div className={styles.featuresSection}>
+            <div id="features" className={styles.featuresSection}>
               <div className={styles.featuresKicker}>WHY CHOOSE US</div>
               <h2 className={styles.featuresTitle}>
                 Premium Features <span className={styles.featuresTitleHighlight}>You'll Love</span>
@@ -653,7 +758,7 @@ const IndexOptions = () => {
             </div>
 
             {/** 隐私模块 */}
-            <div className={styles.privacySection}>
+            <div id="privacy" className={styles.privacySection}>
               <div className={styles.privacyKicker}>PRIVACY FIRST</div>
               <h2 className={styles.privacyTitle}>
                 Your Privacy is <span className={styles.privacyTitleHighlight}>Our Priority</span>

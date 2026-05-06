@@ -151,7 +151,7 @@ function IndexPopup() {
         showModule === 'payed' && !pageLoading && (
           <Flex justify="center" vertical>
             <Flex justify="space-between" gap="4px" className="popup-footer">
-              <Flex align="center" gap={4} style={{ cursor: 'pointer' }} onClick={() => window.open('https://github.com/your-repo/issues', '_blank')}>
+              <Flex align="center" gap={4} style={{ cursor: 'pointer' }} onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSevEpeN1zjgZLMl5YeCGBOUZLoBTSLJLNzJF6MTExdfFEmZaQ/viewform', '_blank')}>
                 <EditOutlined style={{ fontSize: '12px', color: '#707070' }} />
                 <Text style={{ fontSize: '12px', color: '#707070' }}>反馈</Text>
               </Flex>
