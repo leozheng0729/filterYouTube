@@ -369,6 +369,71 @@ const useStyles = createStyles(({ token }) => ({
     maxWidth: '320px',
     margin: 0,
   },
+  metricsSection: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '48px',
+    margin: '40px 0 60px',
+    padding: '32px 0',
+    position: 'relative',
+    '@media (max-width: 768px)': {
+      flexDirection: 'column',
+      gap: '20px',
+      margin: '30px 0 40px',
+      padding: '20px 0',
+    },
+  },
+  metricItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    padding: '20px 24px',
+    background: 'rgba(255, 255, 255, 0.03)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: '16px',
+    backdropFilter: 'blur(10px)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    minWidth: '140px',
+    '@media (max-width: 768px)': {
+      minWidth: '120px',
+      padding: '16px 20px',
+      width: '90%',
+      margin: '0 auto',
+    },
+    '&:hover': {
+      transform: 'translateY(-4px)',
+      background: 'rgba(255, 255, 255, 0.05)',
+      border: '1px solid rgba(255, 0, 0, 0.2)',
+      boxShadow: '0 12px 30px rgba(255, 0, 0, 0.1)',
+    },
+  },
+  metricValue: {
+    color: '#fff',
+    fontSize: '32px',
+    fontWeight: 800,
+    lineHeight: 1.2,
+    marginBottom: '4px',
+    background: 'linear-gradient(to right, #ff0000, #cc0022)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    color: 'transparent',
+    '@media (max-width: 768px)': {
+      fontSize: '28px',
+    },
+  },
+  metricLabel: {
+    color: '#ccc',
+    fontSize: '14px',
+    fontWeight: 600,
+    letterSpacing: '0.5px',
+    textTransform: 'uppercase',
+    '@media (max-width: 768px)': {
+      fontSize: '12px',
+    },
+  },
 }));
 
 const IndexOptions = () => {
@@ -672,6 +737,21 @@ const IndexOptions = () => {
                 </Button>
               </Space>
             </Flex>
+            
+            {/* 关键指标展示 */}
+            <div className={styles.metricsSection}>
+              {[
+                { value: "38+", label: "Active Users" },
+                { value: "5.0", label: "Star Rating" },
+                { value: "100%", label: "Privacy Safe" },
+              ].map((metric, index) => (
+                <div key={index} className={styles.metricItem}>
+                  <div className={styles.metricValue}>{metric.value}</div>
+                  <div className={styles.metricLabel}>{metric.label}</div>
+                </div>
+              ))}
+            </div>
+            
             <img src={iconBase64Show} className="show-main-pic" />
             
             <div id="how-it-works" className={styles.stepsSection}>
