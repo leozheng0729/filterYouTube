@@ -479,6 +479,20 @@ export const config: PlasmoCSConfig = {
           (el.closest("ytd-rich-item-renderer") as HTMLElement) || el
         hideAdElement(wrapper)
       })
+
+      // 处理 ytd-engagement-panel-section-list-renderer 中的广告内容
+      const engagementPanels = document.querySelectorAll("ytd-engagement-panel-section-list-renderer")
+      engagementPanels.forEach((panel: HTMLElement) => {
+        // 检查是否有子元素名称包含 -ad- 或 -ads-
+        const allElements = panel.querySelectorAll("*")
+        const hasAdChild = Array.from(allElements).some((element: Element) => {
+          const tagName = element.tagName.toLowerCase()
+          return tagName.includes("-ad-") || tagName.includes("-ads-")
+        })
+        if (hasAdChild) {
+          hideAdElement(panel)
+        }
+      })
     } else {
       // 恢复之前被广告过滤器隐藏的元素
       const hiddenAds = document.querySelectorAll(
