@@ -76,7 +76,22 @@ const GoogleAuthLogin: React.FC<GoogleOAuthLoginProps> = ({ onLoginSuccess, onLo
         throw new Error(`登录失败: ${supabaseError.message}`);
       }
 
-      // 7. 登录成功，调用回调函数
+      // 7. 记录用户登录的扩展信息
+      try {
+        const manifest = chrome.runtime.getManifest();
+        await supabase.from('login_logs').insert({
+          user_id: data.user.id,
+          email: data.user.email,
+          login_time: new Date().toISOString(),
+          extension_id: chrome.runtime.id,
+          extension_name: manifest.name,
+          extension_version: manifest.version,
+        });
+      } catch (logError) {
+        console.log('记录扩展信息失败:', logError);
+      }
+
+      // 8. 登录成功，调用回调函数
       onLoginSuccess?.(data.user);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'error';

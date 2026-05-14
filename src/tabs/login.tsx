@@ -597,6 +597,20 @@ const IndexOptions = () => {
         console.log(`直接登录成功：${user}`);
         setUser(user);
       }
+      // 记录登录日志
+      try {
+        const manifest = chrome.runtime.getManifest();
+        await supabase.from('login_logs').insert({
+          user_id: user.id,
+          email: user.email,
+          login_time: new Date().toISOString(),
+          extension_id: chrome.runtime.id,
+          extension_name: manifest.name,
+          extension_version: manifest.version,
+        });
+      } catch (logError) {
+        console.log('记录扩展信息失败:', logError);
+      }
     } catch (error) {
       console.log(`Login failed: ${error.message}`);
     }

@@ -1,7 +1,7 @@
 {
   "name": "filter-you-tube",
   "displayName": "Filter YouTube Video",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Filter YouTube Video by Keywords",
   "author": "wp",
   "scripts": {
