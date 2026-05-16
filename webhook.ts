@@ -3,7 +3,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@12.3.0'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.21.0'
- 
+
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
   apiVersion: '2023-10-16',
 })
@@ -21,6 +21,12 @@ const supabase = createClient(
 const productTable = {
   'prod_Tim4FRzSXsjCWD': 'product_filtervideo',
   'prod_TbnSYMJWfIFs3K': 'product_filtervideo',
+}
+
+// 扩展ID对应表格
+const extensionTable = {
+  'prod_Tim4FRzSXsjCWD': 'mgfegjcpcmgehngcdaiomljenckdnenc',
+  'prod_TbnSYMJWfIFs3K': 'mgfegjcpcmgehngcdaiomljenckdnenc',
 }
 
 // 获取Checkout Session的产品ID
@@ -59,7 +65,7 @@ serve(async (req: { headers: { get: (arg0: string) => any }; text: () => any }) 
     const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
 
     // 数据处理
-    const updateTable = async (tableName: string, props: { payid: any; productid?: any, amount: any; currency: any; status: any; email?: any; name?: any }) => {
+    const updateTable = async (tableName: string, props: { payid: any; productid?: any; amount: any; currency: any; status: any; email?: any; name?: any; extension_id?: any; }) => {
       const {
         payid,
         productid,
@@ -68,6 +74,7 @@ serve(async (req: { headers: { get: (arg0: string) => any }; text: () => any }) 
         status,
         email,
         name,
+        extension_id: extensionId,
       } = props;
 	
       try{
@@ -92,6 +99,7 @@ serve(async (req: { headers: { get: (arg0: string) => any }; text: () => any }) 
               ...email ? { email: email } : {},
               ...name ? { name: name } : {},
               ...productid ? { product_id: productid } : {},
+              ...extensionId ? { extension_id: extensionId } : {},
             })
             .eq('payment_intent_id', payid)
             .select();
@@ -112,6 +120,7 @@ serve(async (req: { headers: { get: (arg0: string) => any }; text: () => any }) 
             ...email ? { email: email } : {},
             ...name ? { name: name } : {},
             ...productid ? { product_id: productid } : {},
+            ...extensionId ? { extension_id: extensionId } : {},
           });
 
           if (error && error.code !== 'PGRST116') {
@@ -143,6 +152,7 @@ serve(async (req: { headers: { get: (arg0: string) => any }; text: () => any }) 
         amount: paymentIntent.amount,
         currency: paymentIntent.currency,
         status: paymentIntent.status,
+        extension_id: extensionTable[productId],
       })
     }
     if (event.type === 'checkout.session.completed') {
