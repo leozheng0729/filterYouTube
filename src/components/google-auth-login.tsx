@@ -79,14 +79,14 @@ const GoogleAuthLogin: React.FC<GoogleOAuthLoginProps> = ({ onLoginSuccess, onLo
       // 7. 记录用户登录的扩展信息
       try {
         const manifest = chrome.runtime.getManifest();
-        await supabase.from('login_logs').insert({
+        await supabase.from('login_logs').upsert({
           user_id: data.user.id,
           email: data.user.email,
           login_time: new Date().toISOString(),
           extension_id: chrome.runtime.id,
           extension_name: manifest.name,
           extension_version: manifest.version,
-        });
+        }, { onConflict: 'email, extension_id' });
       } catch (logError) {
         console.log('记录扩展信息失败:', logError);
       }
