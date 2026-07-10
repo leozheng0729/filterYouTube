@@ -78,6 +78,27 @@
   background: #ff7875 !important;
 }
 
+/* PRO 徽标：可点击，跳转付费 */
+.popup-pro-tag {
+  cursor: pointer;
+  font-size: 10px !important;
+  line-height: 16px !important;
+  padding: 0 6px !important;
+  border-radius: 8px !important;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.popup-pro-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(255, 77, 79, 0.35);
+}
+.popup-pro-icon {
+  margin-right: 2px;
+}
+.popup-switch-label {
+  font-size: 13px;
+}
+
 /* ============ Filtering 状态提示 ============ */
 .popup-status {
   display: flex;
