@@ -1,34 +1,52 @@
 import supabase from "./supabase"
 
-// 产品ID
-const PLASMO_PRODUCT_PRICE_ID = "prod_Tim4FRzSXsjCWD";
+export interface GetSubscriptionStatusOptions {
+  /** Logged-in user email. */
+  email: string
+  /** Stripe / payment product price id, e.g. "prod_xxx". */
+  productPriceId: string
+  /**
+   * Per-extension product table name in supabase, e.g. "product_filtervideo",
+   * "product_filterpdf". Each extension owns its own product table.
+   */
+  productTable: string
+}
 
+export const getSubscriptionStatus = async ({
+  email,
+  productPriceId,
+  productTable
+}: GetSubscriptionStatusOptions) => {
+  if (!email) return null
 
-// 获取用户订阅状态
-export const getSubscriptionStatus = async (email: string) => {
-  if (!email) return null;
-  const { data, error } = await supabase
-    .from('order')
-    .select('*')
-    .eq('email', email)
+  const { data: orders, error: orderError } = await supabase
+    .from("order")
+    .select("*")
+    .eq("email", email)
 
-  if (error && error.code !== 'PGRST116') {
-    console.error(error)
+  if (orderError && orderError.code !== "PGRST116") {
+    console.error(orderError)
     return null
   }
 
-  const { payment_intent_id: paymentIntentId } = data?.[0] || {}
+  for (const order of orders ?? []) {
+    const { payment_intent_id: paymentIntentId } = order
+    if (!paymentIntentId) continue
 
-  const { data: item, error: err } = await supabase
-    .from('product_filtervideo')
-    .select('*')
-    .eq('payment_intent_id', paymentIntentId)
-    .eq('product_id', PLASMO_PRODUCT_PRICE_ID)
+    const { data: items, error: productError } = await supabase
+      .from(productTable)
+      .select("*")
+      .eq("payment_intent_id", paymentIntentId)
+      .eq("product_id", productPriceId)
 
-  if (err && err.code !== 'PGRST116') {
-    console.error(err)
-    return null
+    if (productError && productError.code !== "PGRST116") {
+      console.error(productError)
+      return null
+    }
+
+    if (items && items.length > 0) return items
   }
-  return item
+
+  return null
 }
 

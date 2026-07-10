@@ -19,6 +19,10 @@ import "./popup.css";
 
 const { Text } = Typography;
 
+//  产品ID 和 表名
+const PRODUCT_PRICE_ID = "prod_Tim4FRzSXsjCWD"
+const PRODUCT_TABLE = "product_filtervideo"
+
 /** 单个功能开关行 */
 const FeatureSwitch = ({
   label,
@@ -79,7 +83,11 @@ function IndexPopup() {
       const userInfo = await getCurrentUser();
       setUser(userInfo || null);
       if (userInfo) {
-        const sub = await getSubscriptionStatus(userInfo.email || "");
+        const sub = await getSubscriptionStatus({
+          "email": userInfo.email || "",
+          "productPriceId": PRODUCT_PRICE_ID,
+          "productTable": PRODUCT_TABLE,
+        });
         setIsPaid((sub?.length ?? 0) > 0);
       } else {
         setIsPaid(false);
